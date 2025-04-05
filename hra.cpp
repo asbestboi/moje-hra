@@ -11,7 +11,7 @@
 #define CYAN    "\033[36m"
 #define WHITE   "\033[37m"
 #include <windows.h>
-
+// Barvicky
 void SetColor(int textColor, int bgColor) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, (bgColor << 4) + textColor);
@@ -134,7 +134,7 @@ void fight(Character &player, Monster monster) {
             int monsterDamage = rand() % (monster.maxAttack - monster.minAttack + 1) + monster.minAttack;
             player.health -= monsterDamage;
             SetColor(4, 0); //cervena
-            std::cout << monster.name << " na tebe zautocil za " << monsterDamage << "!\n";
+            std::cout << (player.isBlind ? "nekdo" : monster.name) << " na tebe zautocil za " << monsterDamage << "!\n";
             SetColor(1, 0); //modra
             std::cout << "Energie: " << player.energy << "\n";
             SetColor(10, 0); //zelena
@@ -143,8 +143,45 @@ void fight(Character &player, Monster monster) {
         }
 
         if (player.health <= 0) {
-            SetColor(4, 6); //velice viditelne
-            std::cout << "Zemrel jsi! Konec hry.";
+            SetColor(4, 0); //ted jen cervene :(
+            std::cout << R"(
+                    .ed"""" """$$$$be.
+                   -"           ^""**$$$e.
+                 ."                   '$$$c
+                /                      "4$$b
+               d  3                      $$$$
+               $  *                   .$$$$$$
+              .$  ^c           $$$$$e$$$$$$$$.
+              d$L  4.         4$$$$$$$$$$$$$$b
+              $$$$b ^ceeeee.  4$$ECL.F*$$$$$$$
+  e$""=.      $$$$P d$$$$F $ $$$$$$$$$- $$$$$$
+ z$$b. ^c     3$$$F "$$$$b   $"$$$$$$$  $$$$*"      .=""$c
+4$$$$L        $$P"  "$$b   .$ $$$$$...e$$        .=  e$$$.
+^*$$$$$c  %..   *c    ..    $$ 3$$$$$$$$$$eF     zP  d$$$$$
+  "**$$$ec   "   %ce""    $$$  $$$$$$$$$$*    .r" =$$$$P""
+        "*$b.  "c  *$e.    *** d$$$$$"L$$    .d"  e$$***"
+          ^*$$c ^$c $$$      4J$$$$$% $$$ .e*".eeP"
+             "$$$$$$"'$=e....$*$$**$cz$$" "..d$*"
+               "*$$$  *=%4.$ L L$ P3$$$F $$$P"
+                  "$   "%*ebJLzb$e$$$$$b $P"
+                    %..      4$$$$$$$$$$ "
+                     $$$e   z$$$$$$$$$$%
+                      "*$c  "$$$$$$$P"
+                       ."""*$$$$$$$$bc
+                    .-"    .$***$$$"""*e.
+                 .-"    .e$"     "*$c  ^*b.
+          .=*""""    .e$*"          "*bc  "*$e..
+        .$"        .z*"               ^*$e.   "*****e.
+        $$ee$c   .d"                     "*$.        3.
+        ^*$E")$..$"                         *   .ee==d%
+           $.d$$$*                           *  J$$$e*
+            """""                              "$$$"
+                 _________               __   
+                /   _____/ _____________/  |_ 
+                \_____  \ /     \_  __ \   __\
+                /        \  Y Y  \  | \/|  |  
+               /_______  /__|_|  /__|   |__|  
+                       \/      \/            )" << '\n';
             SetColor(7, 0); //bila
             return;
         }
@@ -152,9 +189,11 @@ void fight(Character &player, Monster monster) {
 
     if (player.health > 0) {
         std::cout << "Porazil jsi " << (player.isBlind ? "nekoho" : monster.name) << "!\n";
-        
+        if (rand() % 100 < 50) {
+
         player.gold += rand() % 20 + 1;
         std::cout << "Ziskal jsi zlato. Mas " << player.gold << " zlata.\n";
+    }
     }
 }
 
@@ -171,8 +210,14 @@ SetColor(1, 0); //modra
     std::cout << "Energie: " << player.energy << "\n";
 SetColor(6, 0); //zluta
     std::cout << "Zlato: " << player.gold << "\n";
+SetColor(10, 0); //zelena
+    std::cout << R"(
+  ____             _       _   
+ |_  /__ _ __ __ _| |_ ___| |__
+  / // _` / _/ _` |  _/ -_) / /
+ /___\__,_\__\__,_|\__\___|_\_\
+                           )" << '\n';
 SetColor(7, 0); //bila
-
     Monster goblin = {"Goblin", 5, 1, player.health/3};
     fight(player, goblin);
 
