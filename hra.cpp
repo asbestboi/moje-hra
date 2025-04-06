@@ -112,16 +112,25 @@ void fight(Character &player, Monster monster) {
                 std::cout << "Pouzil jsi magicky utok ktery udelal " << spellDamage << " poskozeni!\n";
                 SetColor(7, 0); //bila
             } else {
+                SetColor(4, 0); //cervena
                 std::cout << "Nemas dost energie na kouzlo!\n";
+                SetColor(7, 0); //bila
+                continue;
             }
         } else if (choice == 3) {
             if (player.energy >= 2) {
                 player.energy -= 2;
                 int healAmount = player.isVegetarian ? 6 : 3;
+                if (player.isUndead) {
+                    healAmount /= 2;
+                }
                 player.health = std::min(player.maxHealth, player.health + healAmount);
                 std::cout << "Vylecil ses o " << healAmount << " zivotu.\n";
             } else {
+                SetColor(4, 0); //cervena
                 std::cout << "Nemas dost energie na leceni!\n";
+                SetColor(7, 0); //bila
+                continue;
             }
         } else {
             SetColor(4, 0); //cervena
@@ -145,44 +154,38 @@ void fight(Character &player, Monster monster) {
         if (player.health <= 0) {
             SetColor(4, 0); //ted jen cervene :(
             std::cout << R"(
-                    .ed"""" """$$$$be.
-                   -"           ^""**$$$e.
-                 ."                   '$$$c
-                /                      "4$$b
-               d  3                      $$$$
-               $  *                   .$$$$$$
-              .$  ^c           $$$$$e$$$$$$$$.
-              d$L  4.         4$$$$$$$$$$$$$$b
-              $$$$b ^ceeeee.  4$$ECL.F*$$$$$$$
-  e$""=.      $$$$P d$$$$F $ $$$$$$$$$- $$$$$$
- z$$b. ^c     3$$$F "$$$$b   $"$$$$$$$  $$$$*"      .=""$c
-4$$$$L        $$P"  "$$b   .$ $$$$$...e$$        .=  e$$$.
-^*$$$$$c  %..   *c    ..    $$ 3$$$$$$$$$$eF     zP  d$$$$$
-  "**$$$ec   "   %ce""    $$$  $$$$$$$$$$*    .r" =$$$$P""
-        "*$b.  "c  *$e.    *** d$$$$$"L$$    .d"  e$$***"
-          ^*$$c ^$c $$$      4J$$$$$% $$$ .e*".eeP"
-             "$$$$$$"'$=e....$*$$**$cz$$" "..d$*"
-               "*$$$  *=%4.$ L L$ P3$$$F $$$P"
-                  "$   "%*ebJLzb$e$$$$$b $P"
-                    %..      4$$$$$$$$$$ "
-                     $$$e   z$$$$$$$$$$%
-                      "*$c  "$$$$$$$P"
-                       ."""*$$$$$$$$bc
-                    .-"    .$***$$$"""*e.
-                 .-"    .e$"     "*$c  ^*b.
-          .=*""""    .e$*"          "*bc  "*$e..
-        .$"        .z*"               ^*$e.   "*****e.
-        $$ee$c   .d"                     "*$.        3.
-        ^*$E")$..$"                         *   .ee==d%
-           $.d$$$*                           *  J$$$e*
-            """""                              "$$$"
-                 _________               __   
-                /   _____/ _____________/  |_ 
-                \_____  \ /     \_  __ \   __\
-                /        \  Y Y  \  | \/|  |  
-               /_______  /__|_|  /__|   |__|  
-                       \/      \/            )" << '\n';
+                            ,--.
+                            {    }
+                            K,   }
+                           /  ~Y`
+                      ,   /   /
+                     {_'-K.__/
+                       `/-.__L._
+                       /  ' /`\_}
+                      /  ' /
+              ____   /  ' /
+       ,-'~~~~    ~~/  ' /_
+     ,'             ``~~~  ',
+    (                        Y
+   {                         I
+  {      -                    `,
+  |       ',                   )
+  |        |   ,..__      __. Y
+  |    .,_./  Y ' / ^Y   J   )|
+  \           |' /   |   |   ||
+   \          L_/    . _ (_,.'(
+    \,   ,      ^^""' / |      )
+      \_  \          /,L]     /
+        '-_~-,       ` `   ./`
+           `'{_            )
+    _________  ^^\..___,.--` __   
+   /   _____/ _____________/  |_ 
+   \_____  \ /     \_  __ \   __\
+   /        \  Y Y  \  | \/|  |  
+  /_______  /__|_|  /__|   |__|  
+          \/      \/            )" << '\n';
             SetColor(7, 0); //bila
+            std::cin >> choice;
             return;
         }
     }
@@ -218,7 +221,7 @@ SetColor(10, 0); //zelena
  /___\__,_\__\__,_|\__\___|_\_\
                            )" << '\n';
 SetColor(7, 0); //bila
-    Monster goblin = {"Goblin", 5, 1, player.health/3};
+    Monster goblin = {"Goblin", 10 + rand() % 6, 1, player.health/3};
     fight(player, goblin);
 
     return 0;
