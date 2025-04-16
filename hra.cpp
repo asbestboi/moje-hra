@@ -89,7 +89,13 @@ struct Monster {
 
 void fight(Character &player, Monster monsters[], int monsterCount) {
     SetColor(4, 0); //cervena
-    std::cout << "\n---Pred tebou stoji " << monsterCount << " nepratel!---\n";
+    std::cout << "\n---Pred tebou stoji " << monsterCount;
+    if (monsterCount < 5 && monsterCount!= 1) {
+    std::cout << " nepratele!---\n";
+    }
+    else {
+    std::cout << " nepratel!---\n";
+    }
     SetColor(7, 0); //bila
     while (player.health > 0) {
         // kontrola
@@ -110,7 +116,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
         }
 
         // Vypis zivych monster
-        std::cout << "Ziva monstra:\n";
+        std::cout << "\nZiva monstra:\n";
         int indexMap[10];
         int aliveCount = 0;
         for (int i = 0; i < monsterCount; ++i) {
@@ -207,7 +213,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
         for (int i = 0; i < monsterCount; ++i) {
             if (monsters[i].health <= 0) continue;
 
-            if (player.dodge && rand() % 100 < 30) {
+            if (!player.dodge && rand() % 100 < 25 ||player.dodge && rand() % 100 < 45) {
                 SetColor(4, 0); //cervena
                 std::cout << (player.isBlind ? "nekdo" : monsters[i].name) << " minul!\n";
                 SetColor(7, 0); //bila
@@ -265,10 +271,43 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
     }
 }
 void village(Character &player) {
+    std::cout << R"(
+                  MMM                                                           
+                MMUUUMM                                                         
+              MMUUUUUUUMMM                                                      
+            MMUUUUUUUUUUUUMM                                                    
+         MMMUUUUUUUUUUUUUUUUMMM                                                 
+       MMUUUUUUUUUUUUUUUUUUUUUUMM                                               
+     MMUUUUUUUUUUUUUUUUUUUUUUUUUUMMM                                            
+   MM  XXXXXXXXXXXXXXXXXXXXXXXXXXXX MM                          MMMM            
+      X___________________________X                           MMUUUUMM          
+      X___________________________X                         MMUUUUUUUUMM        
+      X___________________________X                       MMUUUUUUUUUUUUMM      
+      X_____________OOOOOOOOOO____X                     MMXXXXXXXXXXXXXXXXMM    
+      X_____________O________O____X                    M X_______________X  M   
+      X_____________O________O____X                      X_______________X      
+      X_____________O________O____X                      X____OOOOOOO____X      
+      X_____________OOOOOOOOOO____X                      X____O_____O____X      
+ M^M  M^M__M^M__M^M__M^M__M^M__M^MX M^M             M^M  M^M__M^M__M^M__M^M  M^M
+=|^|==|^|==|^|==|^|==|^|==|^|==|^|==|^|   .  .....  |^|==|^|==|^|==|^|==|^|==|^|
+ | |  | |  | |  | |  | |  | |  | |  | | ........... | |  | |  | |  | |  | |  | |
+-|o|--|o|--|o|--|o|--|o|--|o|--|o|--|o| ........... |o|--|o|--|o|--|o|--|o|--|o|
+ | |  | |  | |  | |  | |  | |  | |  | |.............| |  | |  | |  | |  | |  | |
+=| |==| |==| |==| |==| |==| |==| |==| |.............| |==| |==| |==| |==| |==| |
+                                       .............                            
+                                      ..............                            
+                                      ..............     
+   )" << '\n';
     if (player.gamble == true) {
         player.gold = rand() % 101;
     }
     while (true) {
+        SetColor(10, 0);
+        std::cout << "Zivoty: " << player.health << "\n";
+        SetColor(5, 0);
+        std::cout << "Utok: " << player.attack << "\n";
+        SetColor(1, 0);
+        std::cout << "Energie: " << player.energy << "\n";
         SetColor(6, 0);
         std::cout << "Zlato: " << player.gold << "\n";
         SetColor(7, 0);
@@ -322,16 +361,6 @@ int main() {
     SetConsoleOutputCP(CP_UTF8);
     srand(time(0));
     Character player = chooseClass();
-
-    SetColor(10, 0);
-    std::cout << "Zivoty: " << player.health << "\n";
-    SetColor(5, 0);
-    std::cout << "Utok: " << player.attack << "\n";
-    SetColor(1, 0);
-    std::cout << "Energie: " << player.energy << "\n";
-    SetColor(6, 0);
-    std::cout << "Zlato: " << player.gold << "\n";
-    SetColor(7, 0);
     SetColor(10, 0); //zelena
     std::cout << R"(
   ____             _       _
@@ -363,7 +392,7 @@ SetColor(7, 0); //bila
     fight(player, boj3, 2);
     SetColor(10, 0); //zelena
     if(player.isBlind == false)std::cout << R"(
-    pred tebou se zjevil mini boss!
+---pred tebou se zjevil mini boss!---
 
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣶⣿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
