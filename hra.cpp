@@ -16,7 +16,14 @@ void SetColor(int textColor, int bgColor) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, (bgColor << 4) + textColor);
 }
-
+//https://stackoverflow.com/questions/24776262/pause-console-in-c-program
+void clearScreen() {
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+    }
 struct Character {
     std::string name;
     int maxHealth;
@@ -41,7 +48,7 @@ Character chooseClass() {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Neplatny vstup, zadej cislo.\n";
+            clearScreen();
             continue;
         }
         if (choice == 1) {
@@ -55,10 +62,10 @@ Character chooseClass() {
         } else if (choice == 5) {
             player = {"Zlodej", 5, 5, 4, 3, 3, 25, false, false, false, false, true};
         } else {
-            std::cout << "Neplatna volba, zkuste znovu.\n";
+            clearScreen();
             continue;
         }
-
+        clearScreen();
         std::cout << "Jste si jisti, ze chcete hrat za " << player.name << "? (y/n): \n";
         char confirmation;
         SetColor(10, 0);
@@ -73,9 +80,10 @@ Character chooseClass() {
         std::cin >> confirmation;
 
         if (confirmation == 'y' || confirmation == 'Y') {
+            clearScreen();
             return player;
         } else {
-            std::cout << "Vyberte si classu znovu.\n";
+            clearScreen();
         }
     }
 }
@@ -89,7 +97,7 @@ struct Monster {
 
 void fight(Character &player, Monster monsters[], int monsterCount) {
     SetColor(4, 0); //cervena
-    std::cout << "\n---Pred tebou stoji " << monsterCount;
+    std::cout << "---Pred tebou stoji " << monsterCount;
     if (monsterCount < 5 && monsterCount!= 1) {
     std::cout << " nepratele!---\n";
     }
@@ -97,6 +105,8 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
     std::cout << " nepratel!---\n";
     }
     SetColor(7, 0); //bila
+    system("pause");
+    clearScreen();
     while (player.health > 0) {
         // kontrola
         bool allDead = true;
@@ -112,10 +122,17 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
             player.gold += rand() % 30 + 10;
             std::cout << "Ziskal jsi zlato. Mas " << player.gold << " zlata.\n";
                         SetColor(7, 0);
+            system("pause");
+            clearScreen();
             return;
         }
 
         // Vypis zivych monster
+        SetColor(10, 0);
+        std::cout << "Zivoty: " << player.health << "/" << player.maxHealth << "\n";
+        SetColor(1, 0);
+        std::cout << "Energie: " << player.energy << "\n";
+        SetColor(7, 0);
         std::cout << "\nZiva monstra:\n";
         int indexMap[10];
         int aliveCount = 0;
@@ -139,7 +156,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Neplatny vstup, zadej cislo.\n";
+            clearScreen();
             continue;
         }
         
@@ -189,12 +206,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 int healAmount = player.isVegetarian ? 6 : 3;
                 if (player.isUndead) healAmount /= 2;
                 player.health = std::min(player.maxHealth, player.health + healAmount);
-                std::cout << "Vylecil ses o " << healAmount << " zivotu.\n\n";
-                SetColor(10, 0);
-                std::cout << "Zivoty: " << player.health << "\n";
-                SetColor(1, 0);
-                std::cout << "Energie: " << player.energy << "\n";
-                SetColor(7, 0);
+                clearScreen();
                 continue;
             } else {
                 SetColor(4, 0); //cervena
@@ -203,9 +215,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 continue;
             }
         } else {
-            SetColor(4, 0); //cervena
-            std::cout << "Neplatna volba!\n";
-            SetColor(7, 0); //bila
+            clearScreen();
             continue;
         }
 
@@ -215,24 +225,22 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
 
             if (!player.dodge && rand() % 100 < 25 ||player.dodge && rand() % 100 < 45) {
                 SetColor(4, 0); //cervena
-                std::cout << (player.isBlind ? "nekdo" : monsters[i].name) << " minul!\n";
+                //std::cout << (player.isBlind ? "nekdo" : monsters[i].name) << " minul!\n"; - mozna tento cout vyuziju jinak
                 SetColor(7, 0); //bila
+                clearScreen();
                 continue;
             }
 
             int damage = rand() % (monsters[i].maxAttack - monsters[i].minAttack + 1) + monsters[i].minAttack;
             player.health -= damage;
             SetColor(4, 0); //cervena
-            std::cout << (player.isBlind ? "nekdo" : monsters[i].name) << " na tebe zautocil za " << damage << "!\n";
+            //std::cout << (player.isBlind ? "nekdo" : monsters[i].name) << " na tebe zautocil za " << damage << "!\n"; - mozna tento cout vyuziju jinak
             SetColor(7, 0); //bila
+            clearScreen();
         }
-        SetColor(10, 0);
-        std::cout << "Zivoty: " << player.health << "\n";
-        SetColor(1, 0);
-        std::cout << "Energie: " << player.energy << "\n";
-        SetColor(7, 0);
         if (player.health <= 0) {
             SetColor(4, 0); //cervena
+            clearScreen();
             std::cout << R"(
                              ,--.
                             {    }
@@ -265,13 +273,15 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
   /_______  /__|_|  /__|   |__|
           \/      \/            )" << '\n';
             SetColor(7, 0); //bila
-            std::cin >> choice;
+            system("pause");
             exit(0);
         }
     }
 }
 void village(Character &player) {
     std::cout << R"(
+pred tebou je vesnice.
+
                   MMM                                                           
                 MMUUUMM                                                         
               MMUUUUUUUMMM                                                      
@@ -298,16 +308,19 @@ void village(Character &player) {
                                       ..............                            
                                       ..............     
    )" << '\n';
+   system("pause");
+
     if (player.gamble == true) {
         player.gold = rand() % 101;
     }
     while (true) {
+        clearScreen();
         SetColor(10, 0);
         std::cout << "Zivoty: " << player.health << "\n";
-        SetColor(5, 0);
-        std::cout << "Utok: " << player.attack << "\n";
         SetColor(1, 0);
         std::cout << "Energie: " << player.energy << "\n";
+        SetColor(5, 0);
+        std::cout << "Utok: " << player.attack << "\n";
         SetColor(6, 0);
         std::cout << "Zlato: " << player.gold << "\n";
         SetColor(7, 0);
@@ -320,7 +333,7 @@ void village(Character &player) {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Neplatny vstup, zadej cislo.\n";
+            clearScreen();
             continue;
         }
         if (choice == 1) {
@@ -328,32 +341,42 @@ void village(Character &player) {
                 player.gold -= 15;
                 player.maxHealth += 5;
                 player.health = player.maxHealth;
-                std::cout << "Vylepsil jsi zivoty o 5. Mas " << player.maxHealth << " zivotu.\n";
+                clearScreen();
             } else {
                 std::cout << "Nemas dostatek zlata!\n";
+                system("pause");
+                clearScreen();
             }
         } else if (choice == 2) {
             if (player.gold >= 20) {
                 player.gold -= 20;
                 player.maxEnergy += 5;
                 player.energy = player.maxEnergy;
-                std::cout << "Vylepsil jsi energii o 5. Mas " << player.maxEnergy << " energie.\n";
+                clearScreen();
             } else {
                 std::cout << "Nemas dostatek zlata!\n";
+                system("pause");
+                clearScreen();
             }
         } else if (choice == 3) {
             if (player.gold >= 20) {
                 player.gold -= 20;
                 player.attack += 2;
-                std::cout << "Vylepsil jsi utok o 2. Mas utok: " << player.attack << "\n";
+                clearScreen();
             } else {
                 std::cout << "Nemas dostatek zlata!\n";
+                system("pause");
+                clearScreen();
             }
         } else if (choice == 4) {
-            std::cout << "Opoustis vesnici.\n";
+            clearScreen();
+            std::cout << "Opustil jsi vesnici.\n";
             break;
+            system("pause");
+            clearScreen();
         } else {
-            std::cout << "Neplatna volba. Zkus to znovu.\n";
+            //neplatny vstup uz nechci ohlasovat, to se proste nedela >:(
+            clearScreen();
         }
     }
 }
@@ -369,8 +392,6 @@ int main() {
  /___\__,_\__\__,_|\__\___|_\_\
                            )" << '\n';
 SetColor(7, 0); //bila
-    std::cout << "nachazis se ve vesnici.\n";
-
     village(player);
 //goblin
     Monster boj1[1] = {
@@ -413,11 +434,5 @@ SetColor(7, 0); //bila
         {"Obrovsky sliz", 12 + rand() % 8, 3, 4},
     };
     fight(player, MB1, 1);
-
-
-
-        std::cout << "Ve vesnici sis vylecil vsechny zivoty a doplnil energii\n";
-        player.health = player.maxHealth;
-        player.energy = player.maxEnergy;
         village(player);
 }
