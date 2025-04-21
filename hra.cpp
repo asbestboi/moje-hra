@@ -33,7 +33,7 @@ struct Character {
     int maxEnergy;
     int gold;
     bool isBlind;
-    bool isVegetarian;
+    bool isBlessed;
     bool isUndead;
     bool gamble;
     bool dodge;
@@ -43,7 +43,7 @@ Character chooseClass() {
     int choice;
     Character player;
     while (true) {
-        std::cout << "Vyber si classu:\n1 - Slepec\n2 - Vegetarian\n3 - Kostlivec\n4 - Gambler\n5 - Zlodej\n";
+        std::cout << "Vyber si classu:\n[1] Slepec\n[2] Mnich\n[3] Kostlivec\n[4] Gambler\n[5] Zlodej\n";
         std::cin >> choice;
         if (std::cin.fail()) {
             std::cin.clear();
@@ -54,7 +54,7 @@ Character chooseClass() {
         if (choice == 1) {
             player = {"Slepec", 8, 8, 5, 4, 4, 25, true, false, false, false, false};
         } else if (choice == 2) {
-            player = {"Vegetarian", 9, 9, 3, 6, 6, 25, false, true, false, false, false};
+            player = {"Mnich", 6, 6, 3, 6, 6, 25, false, true, false, false, false};
         } else if (choice == 3) {
             player = {"Kostlivec", 7, 7, 5, 5, 5, 25, false, false, true, false, false};
         } else if (choice == 4) {
@@ -66,7 +66,7 @@ Character chooseClass() {
             continue;
         }
         clearScreen();
-        std::cout << "Jste si jisti, ze chcete hrat za " << player.name << "? (y/n): \n";
+        std::cout << "Jste si jisti, ze chcete hrat za " << player.name << "? [y/n]: \n";
         char confirmation;
         SetColor(10, 0);
         std::cout << "Zivoty: " << player.health << "\n";
@@ -75,7 +75,7 @@ Character chooseClass() {
         SetColor(1, 0);
         std::cout << "Energie: " << player.energy << "\n";
         SetColor(6, 0);
-        std::cout << "Zlato: " << player.gold << "\n";
+        std::cout << "Zlato: "; if (player.gamble) std::cout << "nahodne"; else std::cout << player.gold; std::cout << "\n"; //jen text
         SetColor(7, 0);
         std::cin >> confirmation;
 
@@ -94,6 +94,23 @@ struct Monster {
     int minAttack;
     int maxAttack;
 };
+//hlasky
+const char* attackPhrases[] = {
+    "Zasahl jsi %s a zpusobil %d poskozeni!",
+    "Tvuj utok na %s byl silny udelal %d dmg!",
+    "Dorazil jsi %s za %d!",
+    "Tvuj mec zasahl %s a ubral %d zivota.",
+    "Rozdrtil jsi %s a vzal mu %d HP!"
+};
+
+const char* spellPhrases[] = {
+    "Seslal jsi kouzlo na %s a zasahl za %d!",
+    "Magie zasahla %s a zpusobila %d poskozeni!",
+    "Kouzlo explodovalo na %s za %d dmg!",
+    "Tvoje sila zasahla %s za %d zivota!",
+    "Magicky vyboj poskodil %s za %d!"
+};
+
 
 void fight(Character &player, Monster monsters[], int monsterCount) {
     SetColor(4, 0); //cervena
@@ -103,7 +120,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
     }
     else {
     std::cout << " nepratel!---\n";
-    }
+    }  
     SetColor(7, 0); //bila
     system("pause");
     clearScreen();
@@ -117,11 +134,11 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
             }
         }
         if (allDead) {
-                SetColor(6, 0);
-            std::cout << "Vyhral jsi!\n";
+            SetColor(6, 0);
+            std::cout << "\nVyhral jsi!\n";
             player.gold += rand() % 30 + 10;
             std::cout << "Ziskal jsi zlato. Mas " << player.gold << " zlata.\n";
-                        SetColor(7, 0);
+            SetColor(7, 0);
             system("pause");
             clearScreen();
             return;
@@ -150,7 +167,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 aliveCount++;
             }
         }
-        std::cout << "Chces zautocit (1), pouzit kouzlo (2) nebo leceni (3)? ";
+        std::cout << "Chces zautocit [1], pouzit kouzlo [2] nebo leceni [3]? ";
         int choice;
         std::cin >> choice;
         if (std::cin.fail()) {
@@ -165,12 +182,11 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
             if (aliveCount == 1) {
                 target = indexMap[0];
             } else {
-                std::cout << "Na ktere monstrum utocis (1-" << aliveCount << ")? ";
+                std::cout << "Na ktere monstrum utocis <1-" << aliveCount << ">? ";
                 int pick;
                 std::cin >> pick;
                 pick--;
                 if (pick < 0 || pick >= aliveCount) {
-                    std::cout << "Neplatny cil!\n";
                     continue;
                 }
                 target = indexMap[pick];
@@ -183,7 +199,9 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
             if (player.isBlind) damage *= 1.5;
             monsters[target].health -= damage;
             SetColor(5, 0);
-            std::cout << "Zautocil jsi na " << (player.isBlind ? "nekoho" : monsters[target].name)  << " za " << damage << " poskozeni!\n";
+            //toto pujde videt jen na konci souboje
+            const char* phrase = attackPhrases[rand() % 5];
+            printf(phrase, (player.isBlind ? "nekoho" : monsters[target].name.c_str()), damage);            
             if (player.energy < player.maxEnergy) player.energy++;
             SetColor(7, 0);
         } else if (choice == 2) {
@@ -192,7 +210,9 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 int spellDamage = player.attack * 2;
                 monsters[target].health -= spellDamage;
                 SetColor(5, 0);
-                std::cout << "Pouzil jsi kouzlo na " << (player.isBlind ? "nekoho" : monsters[target].name)  << " za " << spellDamage << " poskozeni!\n";
+                //toto pujde videt jen na konci souboje
+                const char* phrase = spellPhrases[rand() % 5];
+                printf(phrase, (player.isBlind ? "nekoho" : monsters[target].name.c_str()), spellDamage);
                 SetColor(7, 0); //bila
             } else {
                 SetColor(4, 0); //cervena
@@ -203,7 +223,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
         } else if (choice == 3) {
             if (player.energy >= 2) {
                 player.energy -= 2;
-                int healAmount = player.isVegetarian ? 6 : 3;
+                int healAmount = player.isBlessed ? 6 : 3;
                 if (player.isUndead) healAmount /= 2;
                 player.health = std::min(player.maxHealth, player.health + healAmount);
                 clearScreen();
@@ -239,6 +259,32 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
             clearScreen();
         }
         if (player.health <= 0) {
+            if (player.isBlessed && rand() % 100 < 50) {
+                clearScreen();
+                std::cout << "---BUH SE SLITOVAL, BYL JSI SPASEN---\n";
+                SetColor(6, 0);
+                std::cout << R"(
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⣶⣿⣿⠩⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⡟⠟⠩⡄⠀⠀⠀⡀⠠⠔⠤⡀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⣗⣮⣱⡷⢶⣿⣷⣠⠀⠀⡇⡇⠀⠀⠀
+⠀⢀⣠⣤⣶⣾⣿⠍⡿⣽⣸⣻⣼⣶⣿⣶⡿⠷⠇⠀⠀⠀
+⢸⡿⢓⣯⣿⣿⣿⡾⣧⣾⣿⡟⠛⠉⠉⠀⠀⠀⠀⠀⠀⠀
+⠘⠿⠾⠿⠛⠋⠉⣇⢸⡚⡇⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⣼⣯⣵⣮⡍⠓⢄⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⢰⣿⡛⡫⣻⣿⡄⠀⢢⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠰⣿⣏⣽⣿⣿⣧⠀⠀⡆⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠙⣾⡏⣿⡼⣿⣿⠆⠈⢻⣢⢄⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⢹⡹⠈⠃⣯⣘⢦⣀⡌⡿⠀⠈⢢⢄⡀
+⠀⠀⠀⠀⠀⠀⠀⣽⠃⠀⡆⡄⠉⣷⣿⢷⣇⠃⠀⠀⠃⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠃⠁⠸⣿⠿⣾⣿⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣯⠟⠉⡟⠀⠀⠀⠀⠀)" << '\n';
+                system("pause");
+                player.health = player.maxHealth;
+                player.energy = player.maxEnergy;
+                player.isBlessed = false;
+            }
+            else{
             SetColor(4, 0); //cervena
             clearScreen();
             std::cout << R"(
@@ -274,7 +320,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
           \/      \/            )" << '\n';
             SetColor(7, 0); //bila
             system("pause");
-            exit(0);
+            exit(0);}
         }
     }
 }
@@ -324,10 +370,11 @@ pred tebou je vesnice.
         SetColor(6, 0);
         std::cout << "Zlato: " << player.gold << "\n";
         SetColor(7, 0);
-        std::cout << "1. Vylepsit zivoty o 5 (15 zlata)\n";
-        std::cout << "2. Vylepsit energii o 5 (20 zlata)\n";
-        std::cout << "3. Vylepsit utok o 2 (20 zlata)\n";
-        std::cout << "4. Odejit z vesnice\n";
+        std::cout << "---OBCHOD---\n";
+        std::cout << "[1] "; SetColor(10, 0); std::cout << "Vylepsit zivoty o 5"; SetColor(6, 0); std::cout << " (15 zlata)\n"; SetColor(7, 0);
+        std::cout << "[2] "; SetColor(1, 0); std::cout << "Vylepsit energii o 5"; SetColor(6, 0); std::cout << " (20 zlata)\n"; SetColor(7, 0);
+        std::cout << "[3] "; SetColor(5, 0); std::cout << "Vylepsit utok o 2"; SetColor(6, 0); std::cout << " (20 zlata)\n"; SetColor(7, 0);
+        std::cout << "[4] "; SetColor(4, 0); std::cout << "Odejit z vesnice\n"; SetColor(7, 0);
         int choice;
         std::cin >> choice;
         if (std::cin.fail()) {
@@ -380,6 +427,8 @@ pred tebou je vesnice.
         }
     }
 }
+
+
 int main() {
     SetConsoleOutputCP(CP_UTF8);
     srand(time(0));
@@ -395,7 +444,7 @@ SetColor(7, 0); //bila
     village(player);
 //goblin
     Monster boj1[1] = {
-        {"Goblin", 8 + rand() % 6, 1, 3},
+        {"Goblin", 7 + rand() % 6, 1, 3},
     };
     fight(player, boj1, 1);
 
@@ -407,14 +456,14 @@ SetColor(7, 0); //bila
 
 //2 goblini
     Monster boj3[2] = {
-        {"Goblin", 8 + rand() % 6, 1, 3},
-        {"Maly goblin", 5 + rand() % 6, 1, 3}
+        {"Goblin", 7 + rand() % 6, 1, 3},
+        {"Maly goblin", 4 + rand() % 6, 1, 3}
     };
     fight(player, boj3, 2);
+    SetColor(7, 0); //bila
+    std::cout << "---pred tebou se zjevil mini boss!---\n";
     SetColor(10, 0); //zelena
     if(player.isBlind == false)std::cout << R"(
----pred tebou se zjevil mini boss!---
-
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣶⣿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⠻⣿⣿⣿⣿⣿⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀
