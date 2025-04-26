@@ -1,0 +1,10 @@
+25/04/2025
+>odebrane nadbytecne komentare
+>upraveny ascii art (MB1, blessed)
+>upravena krcma
+>zmenen text v kostele
+>pridan changelog (moje-hra/changelog)
+>output smazan a hra.exe je ted primo ve hlavni slozce (moje-hra/hra.exe)
+>pridan backstory (tri nahodne vylepseni statu)
+>kostlivec je nahrazen upirem ktery ziska zivoty pri kazdem zabiti
+>opraven ctime, nahodne hodnoty

@@ -3,6 +3,9 @@
 #include <windows.h>
 #include <limits>
 #include <fstream>
+#include <vector>
+#include <functional>
+#include <ctime>
 #define RESET   "\033[0m"
 #define RED     "\033[31m"
 #define GREEN   "\033[32m"
@@ -56,14 +59,15 @@ struct Character {
     int energy;
     int maxEnergy;
     int gold;
-    int maxSanity;
+    int maxSanity; //planuju vyuzit brzo!!!
     int sanity;
     int blessingChance;
     bool isBlind;
-    bool isUndead;
+    bool vampire;
     bool gamble;
     bool dodge;
     int xp = 0;
+    int lvl = 1;
 };
 
 Character chooseClass() {
@@ -76,7 +80,7 @@ Character chooseClass() {
         SetColor(7, 0);
         std::cout << "[1] Slepec    -> Nemuze videt nepratele ani jejich zivoty ale je silnejsi\n";
         std::cout << "[2] Mnich     -> Ma sanci ze ho buh spasi\n";
-        std::cout << "[3] Kostlivec -> Ma mensi heal ale ma 20% ke kazdemu utoku\n";
+        std::cout << "[3] Upir      -> Kdyz nekoho zabijes normalnim utokem tak si vylecis 5 zivotu\n";
         std::cout << "[4] Gambler   -> Kdyz vejde do vesnice tak ma nahodny pocet penez\n";
         std::cout << "[5] Zlodej    -> Lepe se vyhyba utokum\n";
         std::cin >> choice;
@@ -87,21 +91,21 @@ Character chooseClass() {
             continue;
         }
         if (choice == 1) {
-            player = {"Slepec", 8, 8, 5, 6, 6, 25, 100, 100, 20, true, false, false, false};
+            player = {"slepec", 8, 8, 5, 6, 6, 25, 100, 100, 20, true, false, false, false};
         } else if (choice == 2) {
-            player = {"Mnich", 6, 6, 3, 6, 6, 25, 110, 110, 100, false, false, false, false};
+            player = {"mnich", 6, 6, 3, 6, 6, 25, 110, 110, 100, false, false, false, false};
         } else if (choice == 3) {
-            player = {"Kostlivec", 7, 7, 5, 5, 5, 25, 75, 75, 0, false, true, false, false};
+            player = {"upir", 7, 7, 5, 5, 5, 25, 75, 75, 0, false, true, false, false};
         } else if (choice == 4) {
-            player = {"Gambler", 6, 6, 3, 5, 5, 0, 80, 80, 0, false, false, true, false};
+            player = {"gambler", 6, 6, 3, 5, 5, 0, 80, 80, 0, false, false, true, false};
         } else if (choice == 5) {
-            player = {"Zlodej", 5, 5, 4, 3, 3, 25, 100, 100, 0, false, false, false, true};
+            player = {"zlodej", 6, 6, 4, 3, 3, 25, 100, 100, 0, false, false, false, true};
         } else {
             clearScreen();
             continue;
         }
         clearScreen();
-        std::cout << "Jste si jisti, ze chcete hrat za " << player.name << "? [y/n]: \n";
+        std::cout << "(Tyto staty se navysi az se dozvis svuj pribeh)\n";
         char confirmation;
         SetColor(10, 0);
         std::cout << "Zivoty: " << player.health << "\n";
@@ -112,6 +116,7 @@ Character chooseClass() {
         SetColor(6, 0);
         std::cout << "Zlato: "; if (player.gamble) std::cout << "nahodne"; else std::cout << player.gold; std::cout << "\n"; //jen text
         SetColor(7, 0);
+        std::cout << "Opravdu chces byt " << player.name << "? [y/n]: ";
         std::cin >> confirmation;
 
         if (confirmation == 'y' || confirmation == 'Y') {
@@ -122,7 +127,57 @@ Character chooseClass() {
         }
     }
 }
+//tohle je tragicky kod ale urcite ho pozdeji zlepsim
+void generateBackstory(Character &player) {
 
+    struct moznost {
+        std::string text;
+        std::function<void(Character&)> applyStat;
+    };
+
+    std::vector<moznost> childhood = {
+        {"Byl jsi problemove dite.", [](Character& p){p.attack += 1; }},
+        {"Byl jsi hodne dite.", [](Character& p){ p.maxHealth += 1;}},
+        {"Byl jsi samostatne dite.", [](Character& p){p.gold += 10; }},
+        {"Byl jsi hloupe dite.", [](Character&){}}, //nepouzity parametr
+        {"Byl jsi genialni a velice nadane dite, ve vsem jsi vynikal.", [](Character& p){ p.maxHealth += 2;p.maxEnergy += 2;}}
+    };
+
+    std::vector<moznost> lifePath = {
+        {"venoval zahradniceni.", [](Character& p){p.health += 1; }},
+        {"venoval obchodovani.", [](Character& p){p.gold += 15; }},
+        {"venoval branenim sve materske vesnice.", [](Character& p){p.attack += 2; }},
+        {"venoval bojovem jezdeni na koni.", [](Character& p){p.attack += 2; }},
+        {"valel v posteli, bylo tezke se zvednout.", [](Character&){}},//nepouzity parametr
+        {"venoval magii.", [](Character& p){p.maxEnergy += 1;}}
+    };
+
+    std::vector<moznost> reason = {
+        {"Odesel jsi z domu, protoze mas hlad.", [](Character& p){ p.maxHealth += 1;}},
+        {"Odesel jsi z domu, protoze te boli bricho a potrebujes na zachod.", [](Character&){}},//nepouzity parametr
+        {"Odesel jsi z domu aby ses vydal na vypravu.", [](Character& p){p.attack += 1; }},
+        {"Odesel jsi, protoze se chces naucit carovat.", [](Character& p){p.energy += 1; }}
+    };
+
+    moznost c = childhood[rand() % childhood.size()];
+    moznost l = lifePath[rand() % lifePath.size()];
+    moznost r = reason[rand() % reason.size()];
+    std::cout << "(tohle bude mit dopad na tve staty)\n";
+    SetColor(14, 0);
+    std::cout << "---TVUJ PRIBEH---\n";
+    SetColor(7, 0);
+    std::cout << c.text << "\n";
+    std::cout << "Cely zivot ses " << l.text << "\n";
+    std::cout << "Nakonec se z tebe stal " << player.name << " \n";
+    std::cout << r.text << "\n";
+    std::cout << "Opoustis svuj dum.\n";
+    c.applyStat(player);
+    l.applyStat(player);
+    r.applyStat(player);
+
+    system("pause");
+    clearScreen();
+}
 struct Monster {
     std::string name;
     int health;
@@ -145,7 +200,26 @@ const char* spellPhrases[] = {
     "Tvoje sila zasahla %s za %d zivota!",
     "Magicky vyboj poskodil %s za %d!"
 };
-
+void addXP(Character& player, int amount) {
+    player.xp += amount;
+    while (player.xp >= 50) {
+        player.xp -= 50;
+        player.lvl++;
+        SetColor(2, 0);
+        std::cout << "\nLEVEL UP!\n";
+        SetColor(7, 0); //bila
+        std::cout << "Jsi ted na levelu " << player.lvl << "!\n";
+        player.maxHealth += 2;
+        player.health = player.maxHealth;
+        player.maxEnergy += 1;
+        player.energy = player.maxEnergy;
+        player.attack += 1;
+        std::cout << "Ziskal jsi:\n";
+        std::cout << " +2 max zivotu\n +1 max energie\n +1 utok\n";
+        system("pause");
+        clearScreen();
+    }
+}
 
 void fight(Character &player, Monster monsters[], int monsterCount) {
     SetColor(4, 0); //cervena
@@ -170,6 +244,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
         }
         if (allDead) {
             SetColor(6, 0);
+            addXP(player, 10);
             std::cout << "\nVyhral jsi!\n";
             player.gold += rand() % 30 + 10;
             std::cout << "Ziskal jsi zlato. Mas " << player.gold << " zlata.\n";
@@ -183,7 +258,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
         SetColor(10, 0);
         std::cout << "Zivoty: " << player.health << "/" << player.maxHealth << "\n";
         SetColor(1, 0);
-        std::cout << "Energie: " << player.energy << "\n";
+        std::cout << "Energie: " << player.energy << "/" << player.maxEnergy << "\n";
         SetColor(7, 0);
         std::cout << "\nZiva monstra:\n";
         int indexMap[10];
@@ -234,15 +309,22 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
 
         if (choice == 1) {
             int damage = player.attack;
-            if (player.isUndead) damage *= 1.2;
             if (player.isBlind) damage *= 1.5;
             monsters[target].health -= damage;
-            SetColor(5, 0);
+            addXP(player, 5);
+            if (player.vampire && monsters[target].health <= 0) {
+                player.health = std::min(player.maxHealth, player.health + 5);
+                SetColor(14, 0);
+                std::cout << "Jako upir sis vylecil 5 zivotu!\n";
+                SetColor(7, 0);
+                system("pause");
+            }
             //toto pujde videt jen na konci souboje
             if (allDead == true){
+            SetColor(5, 0);
             const char* phrase = attackPhrases[rand() % 5];
             printf(phrase, (player.isBlind ? "nekoho" : monsters[target].name.c_str()), damage);
-            }            
+            }
             if (player.energy < player.maxEnergy) player.energy++;
             SetColor(7, 0);
         } else if (choice == 2) {
@@ -250,9 +332,10 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 player.energy -= 3;
                 int spellDamage = player.attack * 2;
                 monsters[target].health -= spellDamage;
-                SetColor(5, 0);
+                addXP(player, 5);
                 //toto pujde videt jen na konci souboje
                 if (allDead == true){
+                    SetColor(5, 0);
                     const char* phrase = spellPhrases[rand() % 5];
                     printf(phrase, (player.isBlind ? "nekoho" : monsters[target].name.c_str()), spellDamage);
                 }
@@ -266,8 +349,8 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
         } else if (choice == 3) {
             if (player.energy >= 2) {
                 player.energy -= 2;
-                int healAmount = player.isUndead ? 6 : 3;
-                if (player.isUndead) healAmount /= 2;
+                addXP(player, 5);
+                int healAmount = 4;
                 player.health = std::min(player.maxHealth, player.health + healAmount);
                 clearScreen();
                 continue;
@@ -304,9 +387,11 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
         if (player.health <= 0) {
             if (rand() % 100 < player.blessingChance) {
                 clearScreen();
+                SetColor(14, 0);
                 std::cout << "---BUH SE SLITOVAL, BYL JSI SPASEN---\n";
                 SetColor(6, 0);
                 printAsciiArt("blessed");
+                SetColor(7, 0);
                 system("pause");
                 player.health = player.maxHealth;
                 player.energy = player.maxEnergy;
@@ -338,7 +423,7 @@ void village(Character &player) {
         SetColor(10, 0);
         std::cout << "Zivoty: " << player.health << "/" << player.maxHealth << "\n";
         SetColor(1, 0);
-        std::cout << "Energie: " << player.energy << "\n";
+        std::cout << "Energie: " << player.energy << "/" << player.maxEnergy << "\n";
         SetColor(5, 0);
         std::cout << "Utok: " << player.attack << "\n";
         SetColor(6, 0);
@@ -346,9 +431,9 @@ void village(Character &player) {
         SetColor(11, 0);
         std::cout << "---VESNICE---\n";
         SetColor(7, 0);
-        std::cout << "[1] Jit do krcmy\n";
-        std::cout << "[2] Jit do kostela\n";
-        std::cout << "[3] Jit do obchodu\n";
+        std::cout << "[1] Jit do krcmy (obnovis zivoty a energii)\n";
+        std::cout << "[2] Jit do kostela (zde se modlis)\n";
+        std::cout << "[3] Jit do obchodu (muzes nakupovat upgrady\n";
         SetColor(4, 0);
         std::cout << "[4] Odejit z vesnice\n";
         SetColor(7, 0);
@@ -367,7 +452,7 @@ void village(Character &player) {
             clearScreen();
             player.health = player.maxHealth;
             player.energy = player.maxEnergy;
-            std::cout << "V krčmě je veselo. Dáš si pivko a chvilku odpocines. (obnovil sis zivoty a energii)\n";
+            std::cout << "V krcme je veselo. Das si pivko a na chvilku si odpocines. (obnovil sis zivoty a energii)\n";
             system("pause");
         } else if (mainChoice == 2) {
             clearScreen();
@@ -377,11 +462,11 @@ void village(Character &player) {
                 if (player.blessingChance < 100) {
                     player.blessingChance += 10;
                     if (player.blessingChance > 100) player.blessingChance = 100;
-                    std::cout << "Pomodlil ses v kostele. Sance ze te buh ochrani je " << player.blessingChance << "%.\n";
+                    std::cout << "Pomodlil ses v kostele. Buh vidi skrze tve lzi. Sance ze te buh ochrani je " << player.blessingChance << "%.\n";
                 } else {
                     std::cout << "Buh te miluje.\n";
                 }
-                visitedChurch = true;  // tady je ta oprava
+                visitedChurch = true;
             }
             system("pause");
         } else if (mainChoice == 3) {
@@ -390,7 +475,7 @@ void village(Character &player) {
                 SetColor(10, 0);
                 std::cout << "Zivoty: " << player.health << "/" << player.maxHealth << "\n";
                 SetColor(1, 0);
-                std::cout << "Energie: " << player.energy << "\n";
+                std::cout << "Energie: " << player.energy << "/" << player.maxEnergy << "\n";
                 SetColor(5, 0);
                 std::cout << "Utok: " << player.attack << "\n";
                 SetColor(6, 0);
@@ -444,7 +529,7 @@ void village(Character &player) {
                         clearScreen();
                     }
                 } else if (shopChoice == 4) {
-                    break; // zpet do vesnice
+                    break;
                 } else {
                     clearScreen();
                 }
@@ -461,15 +546,20 @@ void village(Character &player) {
 }
 
 int main() {
-    SetConsoleOutputCP(CP_UTF8);
+    srand(time(0));
     Character player = chooseClass();
+    generateBackstory(player);
     SetColor(10, 0); //zelena
+    player.health = player.maxHealth;
+    player.energy = player.maxEnergy;
     std::cout << R"(
   ____             _       _
  |_  /__ _ __ __ _| |_ ___| |__
   / // _` / _/ _` |  _/ -_) / /
  /___\__,_\__\__,_|\__\___|_\_\
                            )" << '\n';
+    system("pause");
+    clearScreen();
 SetColor(7, 0); //bila
     village(player);
 //goblin
