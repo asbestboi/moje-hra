@@ -14,7 +14,6 @@
 #define MAGENTA "\033[35m"
 #define CYAN    "\033[36m"
 #define WHITE   "\033[37m"
-
 void SetColor(int textColor, int bgColor) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, (bgColor << 4) + textColor);
@@ -80,7 +79,7 @@ Character chooseClass() {
         SetColor(7, 0);
         std::cout << "[1] Slepec    -> Nemuze videt nepratele ani jejich zivoty ale je silnejsi\n";
         std::cout << "[2] Mnich     -> Ma sanci ze ho buh spasi\n";
-        std::cout << "[3] Upir      -> Kdyz nekoho zabijes normalnim utokem tak si vylecis 5 zivotu\n";
+        std::cout << "[3] Upir      -> Kdyz nekoho zabijes normalnim utokem tak si vylecis ctvrtinu zivotu\n";
         std::cout << "[4] Gambler   -> Kdyz vejde do vesnice tak ma nahodny pocet penez\n";
         std::cout << "[5] Zlodej    -> Lepe se vyhyba utokum\n";
         std::cin >> choice;
@@ -136,27 +135,29 @@ void generateBackstory(Character &player) {
     };
 
     std::vector<moznost> childhood = {
-        {"Byl jsi problemove dite.", [](Character& p){p.attack += 1; }},
+        {"Byl jsi problemove dite.", [](Character& p){p.attack += 1;}},
         {"Byl jsi hodne dite.", [](Character& p){ p.maxHealth += 1;}},
-        {"Byl jsi samostatne dite.", [](Character& p){p.gold += 10; }},
+        {"Byl jsi samostatne dite.", [](Character& p){p.gold += 10;}},
         {"Byl jsi hloupe dite.", [](Character&){}}, //nepouzity parametr
         {"Byl jsi genialni a velice nadane dite, ve vsem jsi vynikal.", [](Character& p){ p.maxHealth += 2;p.maxEnergy += 2;}}
     };
 
     std::vector<moznost> lifePath = {
-        {"venoval zahradniceni.", [](Character& p){p.health += 1; }},
-        {"venoval obchodovani.", [](Character& p){p.gold += 15; }},
-        {"venoval branenim sve materske vesnice.", [](Character& p){p.attack += 2; }},
-        {"venoval bojovem jezdeni na koni.", [](Character& p){p.attack += 2; }},
+        {"venoval zahradniceni.", [](Character& p){p.health += 1;}},
+        {"venoval obchodovani.", [](Character& p){p.gold += 15;}},
+        {"venoval branenim sve materske vesnice.", [](Character& p){p.attack += 2;}},
+        {"venoval bojovem jezdeni na koni.", [](Character& p){p.attack += 2;}},
         {"valel v posteli, bylo tezke se zvednout.", [](Character&){}},//nepouzity parametr
         {"venoval magii.", [](Character& p){p.maxEnergy += 1;}}
     };
 
     std::vector<moznost> reason = {
         {"Odesel jsi z domu, protoze mas hlad.", [](Character& p){ p.maxHealth += 1;}},
+        {"Odesel jsi z domu, protoze jsi mel zly sen o tom jak nepratele napadnou tvoji vesnici", [](Character& p){p.maxEnergy += 2;p.maxHealth += 1;}},
         {"Odesel jsi z domu, protoze te boli bricho a potrebujes na zachod.", [](Character&){}},//nepouzity parametr
-        {"Odesel jsi z domu aby ses vydal na vypravu.", [](Character& p){p.attack += 1; }},
-        {"Odesel jsi, protoze se chces naucit carovat.", [](Character& p){p.energy += 1; }}
+        {"Odesel jsi z domu aby ses vydal na vypravu.", [](Character& p){p.attack += 1;}},
+        {"Odesel jsi z domu jelikoz... Uz nevis proc jsi odesel z domu.", [](Character& p){p.maxEnergy += 2;}},
+        {"Odesel jsi, protoze se chces naucit carovat.", [](Character& p){p.energy += 1;}}
     };
 
     moznost c = childhood[rand() % childhood.size()];
@@ -313,9 +314,9 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
             monsters[target].health -= damage;
             addXP(player, 5);
             if (player.vampire && monsters[target].health <= 0) {
-                player.health = std::min(player.maxHealth, player.health + 5);
+                player.health = std::min(player.maxHealth, player.health + player.maxHealth/4);
                 SetColor(14, 0);
-                std::cout << "Jako upir sis vylecil 5 zivotu!\n";
+                std::cout << "Jako upir sis vylecil " << player.maxHealth/4 << " zivotu\n";
                 SetColor(7, 0);
                 system("pause");
             }
@@ -456,17 +457,21 @@ void village(Character &player) {
             system("pause");
         } else if (mainChoice == 2) {
             clearScreen();
-            if (visitedChurch) {
-                std::cout << "Uz ses dnes modlil. Buh te slysel.\n";
+            if (player.vampire) {
+                std::cout << "Jako upir nemuzes vstoupit do svateho mista.\n";
             } else {
-                if (player.blessingChance < 100) {
-                    player.blessingChance += 10;
-                    if (player.blessingChance > 100) player.blessingChance = 100;
-                    std::cout << "Pomodlil ses v kostele. Buh vidi skrze tve lzi. Sance ze te buh ochrani je " << player.blessingChance << "%.\n";
+                if (visitedChurch) {
+                    std::cout << "Uz ses dnes modlil. Buh te slysel.\n";
                 } else {
-                    std::cout << "Buh te miluje.\n";
+                    if (player.blessingChance < 100) {
+                        player.blessingChance += 10;
+                        if (player.blessingChance > 100) player.blessingChance = 100;
+                        std::cout << "Pomodlil ses v kostele. Buh vidi skrze tve lzi. Sance ze te buh ochrani je " << player.blessingChance << "%.\n";
+                    } else {
+                        std::cout << "Buh te miluje.\n";
+                    }
+                    visitedChurch = true;
                 }
-                visitedChurch = true;
             }
             system("pause");
         } else if (mainChoice == 3) {
@@ -564,19 +569,19 @@ SetColor(7, 0); //bila
     village(player);
 //goblin
     Monster boj1[1] = {
-        {"Goblin", 7 + rand() % 6, 1, 3},
+        {"Goblin", 8 + rand() % 6, 1, 3},
     };
     fight(player, boj1, 1);
 
 //nemrtvy
     Monster boj2[1] = {
-        {"Nemrtvy", 9 + rand() % 4, 2, 3},
+        {"Nemrtvy", 9 + rand() % 4, 2, 4},
     };
     fight(player, boj2, 1);
 
 //2 goblini
     Monster boj3[2] = {
-        {"Goblin", 7 + rand() % 6, 1, 3},
+        {"Goblin", 8 + rand() % 6, 1, 3},
         {"Maly goblin", 4 + rand() % 6, 1, 3}
     };
     fight(player, boj3, 2);
@@ -587,7 +592,7 @@ SetColor(7, 0); //bila
 SetColor(7, 0); //bila
 //MB sliz
     Monster MB1[1] = {
-        {"Obrovsky sliz", 12 + rand() % 8, 3, 4},
+        {"Obrovsky sliz", 15 + rand() % 8, 3, 4},
     };
     fight(player, MB1, 1);
         village(player);

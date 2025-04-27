@@ -8,3 +8,13 @@
 >pridan backstory (tri nahodne vylepseni statu)
 >kostlivec je nahrazen upirem ktery ziska zivoty pri kazdem zabiti
 >opraven ctime, nahodne hodnoty
+
+26/04/2025
+>upir nemuze nadale do kostela
+>byl pridan jetset sound effect ktery pozdeji vyuziju (moje-hra/resources/jetset.wav)
+
+27/04/2025
+>changelog upraven pro citelnost
+>do resources byla pridana slozka extras ktera obsahuje ruzne verze ikony (moje-hra/resources/extras)
+>pridan zastupce ktery ma ikonu, hra byla pojmenovana CrownOfHornsRPG [subject to change]
+>buff ruznych nepratel
