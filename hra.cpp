@@ -245,11 +245,11 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
         }
         if (allDead) {
             SetColor(6, 0);
-            addXP(player, 10);
             std::cout << "\nVyhral jsi!\n";
             player.gold += rand() % 30 + 10;
             std::cout << "Ziskal jsi zlato. Mas " << player.gold << " zlata.\n";
             SetColor(7, 0);
+            addXP(player, 10);
             system("pause");
             clearScreen();
             return;
@@ -596,4 +596,44 @@ SetColor(7, 0); //bila
     };
     fight(player, MB1, 1);
         village(player);
+    int choice = 0;
+while (true) {
+    clearScreen();
+    std::cout << (player.isBlind ? "vis ze pred tebou jsou dve cesty, nevis kam vedou\n" : "pred tebou se nachazi 2 cesty ta prvni je zarostla a vede do kopce, ta druha vede z kopce do tmy\n");
+    std::cout << "[1] do kopce\n";
+    std::cout << "[2] z kopce\n";
+    std::cout << "Vyber 1 nebo 2: ";
+    std::cin >> choice;
+
+    if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        clearScreen();
+        continue;
+    }
+
+    if (choice == 1) {
+        clearScreen();
+        std::cout << "nachazis se ve VINES.\n";
+        std::cout << "citis vuni prirody a " << (player.isBlind ? "slysis brouky.\n" : "vidis brouky.\n");
+        system("pause");
+        Monster boj4[1] = {
+            {"hnusny brouk", 10 + rand() % 4, 2, 4},
+        };
+        fight(player, boj4, 1);
+        break;
+    } else if (choice == 2) {
+        clearScreen();
+        std::cout << "nachazis se v UNDERDARKU.\n";
+        std::cout << "citis smrad\n";
+        system("pause");
+        Monster boj4[1] = {
+            {"divny clovek", 10 + rand() % 4, 2, 4},
+        };
+        fight(player, boj4, 1);
+        break;
+    } else {
+        clearScreen();
+    }
+}
 }
