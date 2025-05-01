@@ -21,3 +21,9 @@
 
 28/04/2025
 >pridan VINES a UNDERDARK [subject to change]
+
+01/05/2025
+>pridan header (moje-hra/resources/barvy.h)
+>do extras byl pridan jetset.wav pac ho dlouho nevyuziju (moje-hra/resources/extras/jetset.wav)
+>konecne opravene ze kod potreboval "libgcc_s_dw2-1.dll" ted jsem knihovnu pridal takze by mel kod jit na windows.
+>dnes zacinam pracovat na podpore linux a pozdeji i barvy
