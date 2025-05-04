@@ -7,60 +7,11 @@
 #include <functional>
 #include <ctime>
 #include "resources/barvy.h"
-void SetColor(int textColor, int bgColor) {
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, (bgColor << 4) + textColor);
-}
+#include "resources/character.h"
+#include "resources/backstory.h"
+#include "resources/utility.h"
 //https://stackoverflow.com/questions/24776262/pause-console-in-c-program
-void clearScreen() {
-    #ifdef _WIN32
-        system("cls");
-    #else
-        system("clear");
-    #endif
-    }
 //https://www.w3schools.com/cpp/ref_fstream_fstream.asp
-void printAsciiArt(const std::string& name, const std::string& filePath = "resources/ascii.txt") {
-    std::ifstream file(filePath);
-    if (!file) {
-        std::cerr << "Nepodarilo se otevrit soubor: " << filePath << "\n";
-        return;
-    }
-    std::string line;
-    bool found = false;
-    while (std::getline(file, line)) {
-        if (line == "=== " + name + " ===") {
-            found = true;
-            continue;
-        }
-        if (found) {
-            if (line.rfind("===", 0) == 0) break; // dalsi sekce
-            std::cout << line << "\n";
-        }
-    }
-    if (!found) {
-        std::cerr << "Obrazek '" << name << "' nebyl nalezen v souboru.\n";
-    }
-}
-
-struct Character {
-    std::string name;
-    int maxHealth;
-    int health;
-    int attack;
-    int energy;
-    int maxEnergy;
-    int gold;
-    int maxSanity; //planuju vyuzit brzo!!!
-    int sanity;
-    int blessingChance;
-    bool isBlind;
-    bool vampire;
-    bool gamble;
-    bool dodge;
-    int xp = 0;
-    int lvl = 1;
-};
 
 Character chooseClass() {
     int choice;
@@ -120,58 +71,7 @@ Character chooseClass() {
     }
 }
 //tohle je tragicky kod ale urcite ho pozdeji zlepsim
-void generateBackstory(Character &player) {
 
-    struct moznost {
-        std::string text;
-        std::function<void(Character&)> applyStat;
-    };
-
-    std::vector<moznost> childhood = {
-        {"Byl jsi problemove dite.", [](Character& p){p.attack += 1;}},
-        {"Byl jsi hodne dite.", [](Character& p){ p.maxHealth += 1;}},
-        {"Byl jsi samostatne dite.", [](Character& p){p.gold += 10;}},
-        {"Byl jsi hloupe dite.", [](Character&){}}, //nepouzity parametr
-        {"Byl jsi genialni a velice nadane dite, ve vsem jsi vynikal.", [](Character& p){ p.maxHealth += 2;p.maxEnergy += 2;}}
-    };
-
-    std::vector<moznost> lifePath = {
-        {"venoval zahradniceni.", [](Character& p){p.health += 1;}},
-        {"venoval obchodovani.", [](Character& p){p.gold += 15;}},
-        {"venoval branenim sve materske vesnice.", [](Character& p){p.attack += 2;}},
-        {"venoval bojovem jezdeni na koni.", [](Character& p){p.attack += 2;}},
-        {"valel v posteli, bylo tezke se zvednout.", [](Character&){}},//nepouzity parametr
-        {"venoval magii.", [](Character& p){p.maxEnergy += 1;}}
-    };
-
-    std::vector<moznost> reason = {
-        {"Odesel jsi z domu, protoze mas hlad.", [](Character& p){ p.maxHealth += 1;}},
-        {"Odesel jsi z domu, protoze jsi mel zly sen o tom jak nepratele napadnou tvoji vesnici", [](Character& p){p.maxEnergy += 2;p.maxHealth += 1;}},
-        {"Odesel jsi z domu, protoze te boli bricho a potrebujes na zachod.", [](Character&){}},//nepouzity parametr
-        {"Odesel jsi z domu aby ses vydal na vypravu.", [](Character& p){p.attack += 1;}},
-        {"Odesel jsi z domu jelikoz... Uz nevis proc jsi odesel z domu.", [](Character& p){p.maxEnergy += 2;}},
-        {"Odesel jsi, protoze se chces naucit carovat.", [](Character& p){p.energy += 1;}}
-    };
-
-    moznost c = childhood[rand() % childhood.size()];
-    moznost l = lifePath[rand() % lifePath.size()];
-    moznost r = reason[rand() % reason.size()];
-    std::cout << "(tohle bude mit dopad na tve staty)\n";
-    SetColor(14, 0);
-    std::cout << "---TVUJ PRIBEH---\n";
-    SetColor(7, 0);
-    std::cout << c.text << "\n";
-    std::cout << "Cely zivot ses " << l.text << "\n";
-    std::cout << "Nakonec se z tebe stal " << player.name << " \n";
-    std::cout << r.text << "\n";
-    std::cout << "Opoustis svuj dum.\n";
-    c.applyStat(player);
-    l.applyStat(player);
-    r.applyStat(player);
-
-    system("pause");
-    clearScreen();
-}
 struct Monster {
     std::string name;
     int health;

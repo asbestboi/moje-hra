@@ -27,3 +27,7 @@
 >do extras byl pridan jetset.wav pac ho dlouho nevyuziju (moje-hra/resources/extras/jetset.wav)
 >konecne opravene ze kod potreboval "libgcc_s_dw2-1.dll" ted jsem knihovnu pridal takze by mel kod jit na windows.
 >dnes zacinam pracovat na podpore linux a pozdeji i barvy
+
+04/05/2025
+>pridane headery do moje-hra/resources specificky character.h, utility.h, backstory.h.
+>odebrane funkce ktere jsou ted v headerech.
