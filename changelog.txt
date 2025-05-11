@@ -31,3 +31,8 @@
 04/05/2025
 >pridane headery do moje-hra/resources specificky character.h, utility.h, backstory.h.
 >odebrane funkce ktere jsou ted v headerech.
+
+11/05/2025
+>do underdarku byl pridan drow a 3 pavouci
+>do vines byl pridan kenku a 3 brouci
+>opravena zavorka v menu

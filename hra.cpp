@@ -327,7 +327,7 @@ void village(Character &player) {
         SetColor(7, 0);
         std::cout << "[1] Jit do krcmy (obnovis zivoty a energii)\n";
         std::cout << "[2] Jit do kostela (zde se modlis)\n";
-        std::cout << "[3] Jit do obchodu (muzes nakupovat upgrady\n";
+        std::cout << "[3] Jit do obchodu (muzes nakupovat upgrady)\n";
         SetColor(4, 0);
         std::cout << "[4] Odejit z vesnice\n";
         SetColor(7, 0);
@@ -511,9 +511,15 @@ while (true) {
         std::cout << "citis vuni prirody a " << (player.isBlind ? "slysis brouky.\n" : "vidis brouky.\n");
         system("pause");
         Monster boj4[1] = {
-            {"hnusny brouk", 10 + rand() % 4, 2, 4},
+            {"Kenku", 12 + rand() % 6, 2, 6},
         };
         fight(player, boj4, 1);
+        Monster boj5[3] = {
+            {"Brouk 1", 3 + rand() % 8, 1, 3},
+            {"Brouk 2", 3 + rand() % 8, 1, 3},
+            {"Brouk 3", 3 + rand() % 8, 1, 3},
+        };
+        fight(player, boj5, 3);
         break;
     } else if (choice == 2) {
         clearScreen();
@@ -521,9 +527,15 @@ while (true) {
         std::cout << "citis smrad\n";
         system("pause");
         Monster boj4[1] = {
-            {"divny clovek", 10 + rand() % 4, 2, 4},
+            {"Drow", 12 + rand() % 8, 3, 6},
         };
         fight(player, boj4, 1);
+        Monster boj5[3] = {
+            {"Pavouk 1", 3 + rand() % 6, 2, 3},
+            {"Pavouk 2", 3 + rand() % 6, 2, 3},
+            {"Pavouk 3", 3 + rand() % 6, 2, 3},
+        };
+        fight(player, boj5, 3);
         break;
     } else {
         clearScreen();
