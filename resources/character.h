@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-
 struct Character {
     std::string name;
     int maxHealth;
@@ -9,9 +8,8 @@ struct Character {
     int energy;
     int maxEnergy;
     int gold;
-    int maxSanity;
-    int sanity;
     int blessingChance;
+    int charisma;
     bool isBlind;
     bool vampire;
     bool gamble;

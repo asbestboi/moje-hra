@@ -29,10 +29,17 @@
 >dnes zacinam pracovat na podpore linux a pozdeji i barvy
 
 04/05/2025
->pridane headery do moje-hra/resources specificky character.h, utility.h, backstory.h.
+>pridane headery do moje-hra/resources, specificky character.h, utility.h, backstory.h.
 >odebrane funkce ktere jsou ted v headerech.
 
 11/05/2025
 >do underdarku byl pridan drow a 3 pavouci
 >do vines byl pridan kenku a 3 brouci
 >opravena zavorka v menu
+
+13/05/2025
+>cela funkce fight ma ted header a cpp soubor v moje-hra/resources, specificky fight.h a fight.cpp
+>pridany 2 dalsi backstory a upravene formatovani v backstory
+>funkce vesnice a addxp jsou ted v headeru utility.h
+>odebrana sanity, planoval jsem vyuzit ale nakonec by to bylo celkem zbytecne
+>pridane charisma, planuju pridat slevy, extra charisma treba v krcme a nebo pouziti charisma na nepratelich

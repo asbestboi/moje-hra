@@ -9,18 +9,21 @@ void generateBackstory(Character &player) {
     };
 
     std::vector<moznost> childhood = {
-        {"Byl jsi problemove dite.", [](Character& p){p.attack += 1;}},
-        {"Byl jsi hodne dite.", [](Character& p){ p.maxHealth += 1;}},
-        {"Byl jsi samostatne dite.", [](Character& p){p.gold += 10;}},
-        {"Byl jsi hloupe dite.", [](Character&){}}, //nepouzity parametr
-        {"Byl jsi genialni a velice nadane dite, ve vsem jsi vynikal.", [](Character& p){ p.maxHealth += 2;p.maxEnergy += 2;}}
+        {"zabavne dite se kterym se nikdo nenudil.", [](Character& p){p.charisma += 5;}},
+        {"problemove dite.", [](Character& p){p.attack += 1;}},
+        {"hodne dite.", [](Character& p){ p.maxHealth += 1;}},
+        {"samostatne dite.", [](Character& p){p.gold += 10;}},
+        {"hloupe dite.", [](Character&){}}, //nepouzity parametr
+        {"genialni a velice nadane dite, ve vsem jsi vynikal.", [](Character& p){ p.maxHealth += 2;p.maxEnergy += 2;}}
     };
 
     std::vector<moznost> lifePath = {
         {"venoval zahradniceni.", [](Character& p){p.health += 1;}},
+        {"venoval zenam.", [](Character& p){p.charisma += 5;}},
         {"venoval obchodovani.", [](Character& p){p.gold += 15;}},
         {"venoval branenim sve materske vesnice.", [](Character& p){p.attack += 2;}},
         {"venoval bojovem jezdeni na koni.", [](Character& p){p.attack += 2;}},
+        {"venoval sbiranim hub.", [](Character& p){p.health += 2;}},
         {"valel v posteli, bylo tezke se zvednout.", [](Character&){}},//nepouzity parametr
         {"venoval magii.", [](Character& p){p.maxEnergy += 1;}}
     };
@@ -41,7 +44,7 @@ void generateBackstory(Character &player) {
     SetColor(14, 0);
     std::cout << "---TVUJ PRIBEH---\n";
     SetColor(7, 0);
-    std::cout << c.text << "\n";
+    std::cout << "Byl jsi " << c.text << "\n";
     std::cout << "Cely zivot ses " << l.text << "\n";
     std::cout << "Nakonec se z tebe stal " << player.name << " \n";
     std::cout << r.text << "\n";
