@@ -43,3 +43,7 @@
 >funkce vesnice a addxp jsou ted v headeru utility.h
 >odebrana sanity, planoval jsem vyuzit ale nakonec by to bylo celkem zbytecne
 >pridane charisma, planuju pridat slevy, extra charisma treba v krcme a nebo pouziti charisma na nepratelich
+
+14/05/2025
+>zmeny ohledne boje, ted maji bossove první utok a pak az hrac
+>zmeny ohledne clearscreen

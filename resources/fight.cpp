@@ -23,15 +23,46 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
     SetColor(4, 0); //cervena
     std::cout << "---Pred tebou stoji " << monsterCount;
     if (monsterCount < 5 && monsterCount!= 1) {
-    std::cout << " nepratele!---\n";
-    }
-    else {
-    std::cout << " nepratel!---\n";
+        std::cout << " nepratele!---\n";
+    } else {
+        std::cout << " nepratel!---\n";
     }  
     SetColor(7, 0); //bila
     system("pause");
     clearScreen();
+
+    bool bossFirst = false;
+    for (int i = 0; i < monsterCount; ++i) {
+        if (monsters[i].isBoss) {
+            bossFirst = true;
+            break;
+        }
+    }
+
     while (player.health > 0) {
+        clearScreen();
+        //boss check
+        if (bossFirst) {
+            for (int i = 0; i < monsterCount; ++i) {
+                if (monsters[i].health <= 0) continue;
+
+                if ((!player.dodge && rand() % 100 < 25) || (player.dodge && rand() % 100 < 45)) {
+                    SetColor(4, 0);
+                    SetColor(7, 0);
+                    continue;
+                }
+
+                int damage = rand() % (monsters[i].maxAttack - monsters[i].minAttack + 1) + monsters[i].minAttack;
+                player.health -= damage;
+                SetColor(4, 0);
+                SetColor(7, 0);
+
+                if (player.health <= 0) break;
+            }
+            bossFirst = false;
+            if (player.health <= 0) continue;
+        }
+
         // kontrola
         bool allDead = true;
         for (int i = 0; i < monsterCount; ++i) {
@@ -42,7 +73,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
         }
         if (allDead) {
             SetColor(6, 0);
-            std::cout << "\nVyhral jsi!\n";
+            std::cout << "Vyhral jsi!\n";
             player.gold += rand() % 30 + 10;
             std::cout << "Ziskal jsi zlato. Mas " << player.gold << " zlata.\n";
             SetColor(7, 0);
@@ -64,17 +95,17 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
         for (int i = 0; i < monsterCount; ++i) {
             if (monsters[i].health > 0) {
                 SetColor(2, 0);
-                if (player.isBlind == true){
-                    std::cout << (aliveCount + 1) << ": " << (player.isBlind ? "nekdo" : monsters[i].name) << "\n";
-                }
-                else{
+                if (player.isBlind) {
+                    std::cout << (aliveCount + 1) << ": " << "nekdo\n";
+                } else {
                     std::cout << (aliveCount + 1) << ": " << monsters[i].name << " (" << monsters[i].health << " HP)\n";
                 }
-                SetColor(7, 0); //bila
+                SetColor(7, 0);
                 indexMap[aliveCount] = i;
                 aliveCount++;
             }
         }
+
         std::cout << "Chces zautocit ["; SetColor(5, 0); std::cout << "1"; SetColor(7, 0);
         std::cout << "], pouzit kouzlo ["; SetColor(1, 0); std::cout << "2"; SetColor(7, 0);
         std::cout << "] nebo leceni ["; SetColor(10, 0); std::cout << "3"; SetColor(7, 0);
@@ -87,7 +118,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
             clearScreen();
             continue;
         }
-        
+
         int target = -1;
         if (choice == 1 || choice == 2) {
             if (aliveCount == 1) {
@@ -109,19 +140,14 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
             int damage = player.attack;
             if (player.isBlind) damage *= 1.5;
             monsters[target].health -= damage;
+            clearScreen();
             addXP(player, 5);
             if (player.vampire && monsters[target].health <= 0) {
-                player.health = std::min(player.maxHealth, player.health + player.maxHealth/4);
+                player.health = std::min(player.maxHealth, player.health + player.maxHealth / 4);
                 SetColor(14, 0);
-                std::cout << "Jako upir sis vylecil " << player.maxHealth/4 << " zivotu\n";
+                std::cout << "Jako upir sis vylecil " << player.maxHealth / 4 << " zivotu\n";
                 SetColor(7, 0);
                 system("pause");
-            }
-            //toto pujde videt jen na konci souboje
-            if (allDead == true){
-            SetColor(5, 0);
-            const char* phrase = attackPhrases[rand() % 5];
-            printf(phrase, (player.isBlind ? "nekoho" : monsters[target].name.c_str()), damage);
             }
             if (player.energy < player.maxEnergy) player.energy++;
             SetColor(7, 0);
@@ -130,18 +156,13 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 player.energy -= 3;
                 int spellDamage = player.attack * 2;
                 monsters[target].health -= spellDamage;
+                clearScreen();
                 addXP(player, 5);
-                //toto pujde videt jen na konci souboje
-                if (allDead == true){
-                    SetColor(5, 0);
-                    const char* phrase = spellPhrases[rand() % 5];
-                    printf(phrase, (player.isBlind ? "nekoho" : monsters[target].name.c_str()), spellDamage);
-                }
-                SetColor(7, 0); //bila
+                SetColor(7, 0);
             } else {
-                SetColor(4, 0); //cervena
+                SetColor(4, 0);
                 std::cout << "Nemas dost energie na kouzlo!\n";
-                SetColor(7, 0); //bila
+                SetColor(7, 0);
                 continue;
             }
         } else if (choice == 3) {
@@ -153,9 +174,9 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 clearScreen();
                 continue;
             } else {
-                SetColor(4, 0); //cervena
+                SetColor(4, 0);
                 std::cout << "Nemas dost energie na leceni!\n";
-                SetColor(7, 0); //bila
+                SetColor(7, 0);
                 continue;
             }
         } else {
@@ -168,20 +189,17 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
             if (monsters[i].health <= 0) continue;
 
             if ((!player.dodge && rand() % 100 < 25) || (player.dodge && rand() % 100 < 45)) {
-                SetColor(4, 0); //cervena
-                //std::cout << (player.isBlind ? "nekdo" : monsters[i].name) << " minul!\n"; - mozna tento cout vyuziju jinak
-                SetColor(7, 0); //bila
-                clearScreen();
+                SetColor(4, 0);
+                SetColor(7, 0);
                 continue;
             }
 
             int damage = rand() % (monsters[i].maxAttack - monsters[i].minAttack + 1) + monsters[i].minAttack;
             player.health -= damage;
-            SetColor(4, 0); //cervena
-            //std::cout << (player.isBlind ? "nekdo" : monsters[i].name) << " na tebe zautocil za " << damage << "!\n"; - mozna tento cout vyuziju jinak
-            SetColor(7, 0); //bila
-            clearScreen();
+            SetColor(4, 0);
+            SetColor(7, 0);
         }
+
         if (player.health <= 0) {
             if (rand() % 100 < player.blessingChance) {
                 clearScreen();
@@ -195,14 +213,13 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 player.energy = player.maxEnergy;
                 player.blessingChance /= 2;
                 clearScreen();
+            } else {
+                SetColor(4, 0);
+                clearScreen();
+                printAsciiArt("smrt");
+                SetColor(7, 0);
+                exit(0);
             }
-            else{
-            SetColor(4, 0); //cervena
-            clearScreen();
-            printAsciiArt("smrt");
-            SetColor(7, 0); //bila
-            system("pause");
-            exit(0);}
         }
     }
 }

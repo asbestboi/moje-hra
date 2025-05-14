@@ -115,7 +115,7 @@ SetColor(7, 0); //bila
 SetColor(7, 0); //bila
 //MB sliz
     Monster MB1[1] = {
-        {"Obrovsky sliz", 15 + rand() % 8, 3, 4},
+        {"Obrovsky sliz", 15 + rand() % 8, 3, 4, true},
     };
     fight(player, MB1, 1);
         village(player);
