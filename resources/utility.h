@@ -77,9 +77,9 @@ void village(Character &player) {
         SetColor(11, 0);
         std::cout << "---VESNICE---\n";
         SetColor(7, 0);
-        std::cout << "[1] Jit do krcmy (obnovis zivoty a energii)\n";
-        std::cout << "[2] Jit do kostela (zde se modlis)\n";
-        std::cout << "[3] Jit do obchodu (muzes nakupovat upgrady)\n";
+        std::cout << "[1] Jit do krcmy (obnovis si zivoty a energii a vylepsis charisma za 5 zlata)\n";
+        std::cout << "[2] Jit do kostela (zde se modlis a ziskas sanci ze te buh ochrani)\n";
+        std::cout << "[3] Jit do obchodu (muzes nakupovat upgrady za zlato)\n";
         SetColor(4, 0);
         std::cout << "[4] Odejit z vesnice\n";
         SetColor(7, 0);
@@ -95,11 +95,20 @@ void village(Character &player) {
         }
 
         if (mainChoice == 1) {
-            clearScreen();
-            player.health = player.maxHealth;
-            player.energy = player.maxEnergy;
-            std::cout << "V krcme je veselo. Das si pivko a na chvilku si odpocines. (obnovil sis zivoty a energii)\n";
-            system("pause");
+            if (player.gold >= 5) {
+                player.gold -= 5;
+                clearScreen();
+                std::cout << "V krcme je veselo. Das si pivko a na chvilku si odpocines. (obnovil sis zivoty a energii)\n";
+                player.charisma += 3;
+                player.health = player.maxHealth;
+                player.energy = player.maxEnergy;
+                system("pause");
+                clearScreen();
+                    } else {
+                        std::cout << "Nemas dostatek zlata!\n";
+                        system("pause");
+                        clearScreen();
+                    }
         } else if (mainChoice == 2) {
             clearScreen();
             if (player.vampire) {

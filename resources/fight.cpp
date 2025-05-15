@@ -74,10 +74,12 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
         if (allDead) {
             SetColor(6, 0);
             std::cout << "Vyhral jsi!\n";
-            player.gold += rand() % 30 + 10;
+            if (player.dodge && rand() % 100 < 50) {
+            player.gold += rand() % 30 + 10; //mozna zmenin, je to az moc i guess
             std::cout << "Ziskal jsi zlato. Mas " << player.gold << " zlata.\n";
+            }
             SetColor(7, 0);
-            addXP(player, 10);
+            addXP(player, 5);
             system("pause");
             clearScreen();
             return;
@@ -160,6 +162,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 addXP(player, 5);
                 SetColor(7, 0);
             } else {
+                system("pause");
                 SetColor(4, 0);
                 std::cout << "Nemas dost energie na kouzlo!\n";
                 SetColor(7, 0);
@@ -174,6 +177,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 clearScreen();
                 continue;
             } else {
+                system("pause");
                 SetColor(4, 0);
                 std::cout << "Nemas dost energie na leceni!\n";
                 SetColor(7, 0);

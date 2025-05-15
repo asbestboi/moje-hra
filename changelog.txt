@@ -45,5 +45,11 @@
 >pridane charisma, planuju pridat slevy, extra charisma treba v krcme a nebo pouziti charisma na nepratelich
 
 14/05/2025
->zmeny ohledne boje, ted maji bossove první utok a pak az hrac
+>zmeny ohledne boje, ted maji bossove prvni utok a pak az hrac
 >zmeny ohledne clearscreen
+
+15/05/2025
+>krcma uz neni zdarma, ted stoji 5 zlatych a jde získat charisma ktere pujde pozdeji vyuzit
+>sance na ziskani zlataku z nepratel je 50% podle zadani
+>vesnice ma ted vice informaci k moznostem (planuju to udelat jeste vice prehledne)
+>opravene nejake minor bugy ohledne souboju a zobrazovani textu
