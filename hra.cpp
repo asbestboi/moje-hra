@@ -13,7 +13,7 @@
 #include "resources/fight.cpp"
 //https://stackoverflow.com/questions/24776262/pause-console-in-c-program
 //https://www.w3schools.com/cpp/ref_fstream_fstream.asp
-
+//https://cplusplus.com/reference/fstream/ofstream/
 Character chooseClass() {
     int choice;
     Character player;

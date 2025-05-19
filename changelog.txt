@@ -53,3 +53,9 @@
 >sance na ziskani zlataku z nepratel je 50% podle zadani
 >vesnice ma ted vice informaci k moznostem (planuju to udelat jeste vice prehledne)
 >opravene nejake minor bugy ohledne souboju a zobrazovani textu
+
+19/05/2025
+>opraven bug ve kterem slo byt nesmrtelny po umrti na zacatku bossfightu
+>velice upraven fight.cpp
+>krcma byla upravena, po trech navstivenich se opijete a probudite mimo vesnice
+>novy debug vypis, brzo asi odstranim, zatim public

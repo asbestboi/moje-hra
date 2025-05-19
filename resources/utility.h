@@ -26,7 +26,7 @@ void printAsciiArt(const std::string& name, const std::string& filePath = "resou
             continue;
         }
         if (found) {
-            if (line.rfind("===", 0) == 0) break; // dalsi sekce
+            if (line.rfind("===", 0) == 0) break; //dalsi sekce
             std::cout << line << "\n";
         }
     }
@@ -55,6 +55,7 @@ void addXP(Character& player, int amount) {
     }
 }
 void village(Character &player) {
+    int drunkness = 0;
     bool visitedChurch = false;
     printAsciiArt("vesnice");
 
@@ -83,7 +84,6 @@ void village(Character &player) {
         SetColor(4, 0);
         std::cout << "[4] Odejit z vesnice\n";
         SetColor(7, 0);
-
         int mainChoice;
         std::cin >> mainChoice;
 
@@ -95,20 +95,47 @@ void village(Character &player) {
         }
 
         if (mainChoice == 1) {
-            if (player.gold >= 5) {
-                player.gold -= 5;
-                clearScreen();
-                std::cout << "V krcme je veselo. Das si pivko a na chvilku si odpocines. (obnovil sis zivoty a energii)\n";
-                player.charisma += 3;
-                player.health = player.maxHealth;
-                player.energy = player.maxEnergy;
-                system("pause");
-                clearScreen();
+            if (drunkness == 3) {
+                    clearScreen();
+                    std::cout << "Ty hlupaku! Opil jses do nemoty, probouzis se na uplne nahodnem miste mimo vesnici.\n";
+                    system("pause");
+                    break;
+                } else {
+                    int cena = 5;
+
+                    //sleva podle charisma
+                    if (player.charisma >= 55) {
+                        cena = 2;
+                    } else if (player.charisma >= 45) {
+                        cena = 3;
+                    } else if (player.charisma >= 30) {
+                        cena = 4;
+                    }
+
+                    if (player.gold >= cena) {
+                        clearScreen();
+                        std::cout << "V krcme je veselo. Das si pivko a na chvilku si odpocines. (obnovil sis zivoty a energii)\n";
+                        std::cout << "Zaplatil jsi " << cena << " zlatych.\n";
+                        drunkness++;
+                        if (drunkness == 1) {
+                            std::cout << "Osvezujici pivo!\n";
+                        } else if (drunkness == 2) { 
+                            std::cout << "V krcme je velka zabava!\n";
+                        } else if (drunkness == 3) {
+                            std::cout << "Citis se opily, asi bys mel prestat pit.\n";
+                        }
+                        player.gold -= cena;
+                        player.charisma += 3;
+                        player.health = player.maxHealth;
+                        player.energy = player.maxEnergy;
+                        system("pause");
+                        clearScreen();
                     } else {
                         std::cout << "Nemas dostatek zlata!\n";
                         system("pause");
                         clearScreen();
                     }
+                }
         } else if (mainChoice == 2) {
             clearScreen();
             if (player.vampire) {
