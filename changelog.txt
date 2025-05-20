@@ -59,3 +59,8 @@
 >velice upraven fight.cpp
 >krcma byla upravena, po trech navstivenich se opijete a probudite mimo vesnice
 >novy debug vypis, brzo asi odstranim, zatim public
+
+20/05/2025
+>pridane linky
+>pridan header na vesnici
+>lepsi implementace headeru

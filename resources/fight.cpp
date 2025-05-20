@@ -28,7 +28,26 @@ void logEvent(const std::string& text) {
         log.close();
     }
 }
-
+void addXP(Character& player, int amount) {
+    player.xp += amount;
+    while (player.xp >= 50) {
+        player.xp -= 50;
+        player.lvl++;
+        SetColor(2, 0);
+        std::cout << "LEVEL UP!\n";
+        SetColor(7, 0); //bila
+        std::cout << "Jsi ted na levelu " << player.lvl << "!\n";
+        player.maxHealth += 2;
+        player.health = player.maxHealth;
+        player.maxEnergy += 1;
+        player.energy = player.maxEnergy;
+        player.attack += 1;
+        std::cout << "Ziskal jsi:\n";
+        std::cout << " +2 max zivotu\n +1 max energie\n +1 utok\n";
+        system("pause");
+        clearScreen();
+    }
+}
 bool checkIfPlayerDied(Character &player) {
     if (player.health <= 0) {
         if (rand() % 100 < player.blessingChance) {
@@ -56,6 +75,7 @@ bool checkIfPlayerDied(Character &player) {
 }
 
 void fight(Character &player, Monster monsters[], int monsterCount) {
+    drawHeaderLine();
     SetColor(4, 0);
     std::cout << "---Pred tebou stoji " << monsterCount;
     if (monsterCount < 5 && monsterCount != 1) {

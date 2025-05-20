@@ -11,16 +11,20 @@
 #include "resources/backstory.h"
 #include "resources/utility.h"
 #include "resources/fight.cpp"
+#include "resources/village.h"
 //https://stackoverflow.com/questions/24776262/pause-console-in-c-program
 //https://www.w3schools.com/cpp/ref_fstream_fstream.asp
 //https://cplusplus.com/reference/fstream/ofstream/
+
 Character chooseClass() {
     int choice;
     Character player;
     while (true) {
         clearScreen();
+        drawHeaderLine();
         SetColor(6, 0);
-        std::cout << "---Vyber si classu:---\n";
+        printCentered("VYBER CLASS");
+        drawHeaderLine();
         SetColor(7, 0);
         std::cout << "[1] Slepec    -> Nemuze videt nepratele ani jejich zivoty ale je silnejsi\n";
         std::cout << "[2] Mnich     -> Hned na zacatku hry sance ze ho buh spasi je 100%\n";
@@ -49,6 +53,10 @@ Character chooseClass() {
             continue;
         }
         clearScreen();
+        drawHeaderLine();
+        SetColor(6, 0);
+        printCentered("VYBER CLASS");
+        drawHeaderLine();
         std::cout << "(Tyto staty se navysi az se dozvis svuj pribeh)\n";
         char confirmation;
         SetColor(10, 0);

@@ -40,10 +40,12 @@ void generateBackstory(Character &player) {
     moznost c = childhood[rand() % childhood.size()];
     moznost l = lifePath[rand() % lifePath.size()];
     moznost r = reason[rand() % reason.size()];
-    std::cout << "(tohle bude mit dopad na tve staty)\n";
+    drawHeaderLine();
     SetColor(14, 0);
-    std::cout << "---TVUJ PRIBEH---\n";
+    printCentered("TVUJ PRIBEH");
+    drawHeaderLine();
     SetColor(7, 0);
+    std::cout << "(tohle bude mit dopad na tve staty)\n";
     std::cout << "Byl jsi " << c.text << "\n";
     std::cout << "Cely zivot ses " << l.text << "\n";
     std::cout << "Nakonec se z tebe stal " << player.name << " \n";
