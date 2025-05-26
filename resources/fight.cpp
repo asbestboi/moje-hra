@@ -28,6 +28,7 @@ void logEvent(const std::string& text) {
         log.close();
     }
 }
+
 void addXP(Character& player, int amount) {
     player.xp += amount;
     while (player.xp >= 50) {
@@ -35,7 +36,7 @@ void addXP(Character& player, int amount) {
         player.lvl++;
         SetColor(2, 0);
         std::cout << "LEVEL UP!\n";
-        SetColor(7, 0); //bila
+        SetColor(7, 0);
         std::cout << "Jsi ted na levelu " << player.lvl << "!\n";
         player.maxHealth += 2;
         player.health = player.maxHealth;
@@ -44,20 +45,21 @@ void addXP(Character& player, int amount) {
         player.attack += 1;
         std::cout << "Ziskal jsi:\n";
         std::cout << " +2 max zivotu\n +1 max energie\n +1 utok\n";
-        system("pause");
+        waitForKeyPress();
         clearScreen();
     }
 }
+
 bool checkIfPlayerDied(Character &player) {
     if (player.health <= 0) {
         if (rand() % 100 < player.blessingChance) {
             clearScreen();
-            SetColor(14, 0);
-            std::cout << "---BUH SE SLITOVAL, BYL JSI SPASEN---\n";
             SetColor(6, 0);
             printAsciiArt("blessed");
+            SetColor(14, 0);
+            std::cout << "---BUH SE SLITOVAL, BYL JSI SPASEN---\n";
             SetColor(7, 0);
-            system("pause");
+            waitForKeyPress();
             player.health = player.maxHealth;
             player.energy = player.maxEnergy;
             player.blessingChance /= 2;
@@ -74,78 +76,56 @@ bool checkIfPlayerDied(Character &player) {
     return false;
 }
 
+void showCurrentStats(Character &player, Monster monsters[], int monsterCount) {
+    SetColor(10, 0);
+    std::cout << "Zivoty: " << player.health << "/" << player.maxHealth << "\n";
+    SetColor(1, 0);
+    std::cout << "Energie: " << player.energy << "/" << player.maxEnergy << "\n\n";
+    SetColor(7, 0);
+
+    std::cout << "Ziva monstra:\n";
+    for (int i = 0, count = 1; i < monsterCount; ++i) {
+        if (monsters[i].health > 0) {
+            SetColor(2, 0);
+            std::cout << count << ": " << (player.isBlind ? "nekdo" : monsters[i].name + " (" + std::to_string(monsters[i].health) + " HP)") << "\n";
+            SetColor(7, 0);
+            count++;
+        }
+    }
+    std::cout << "\n";
+}
+
 void fight(Character &player, Monster monsters[], int monsterCount) {
     drawHeaderLine();
     SetColor(4, 0);
-    std::cout << "---Pred tebou stoji " << monsterCount;
+    std::cout << "Pred tebou stoji " << monsterCount;
     if (monsterCount < 5 && monsterCount != 1) {
-        std::cout << " nepratele!---\n";
+        std::cout << " nepratele!\n";
     } else {
-        std::cout << " nepratel!---\n";
+        std::cout << " nepratel!\n";
     }
     SetColor(7, 0);
-    system("pause");
+    waitForKeyPress();
     clearScreen();
 
-    bool bossFirst = false;
+    bool activeBoss = false;
     for (int i = 0; i < monsterCount; ++i) {
         if (monsters[i].isBoss) {
-            bossFirst = true;
+            activeBoss = true;
             break;
         }
     }
 
     while (player.health > 0) {
-        clearScreen();
+        //clearScreen();
+        drawHeaderLine();
+        showCurrentStats(player, monsters, monsterCount);
+        drawHeaderLine();
 
-        if (bossFirst) {
-            for (int i = 0; i < monsterCount; ++i) {
-                if (monsters[i].health <= 0) continue;
-
-                if ((!player.dodge && rand() % 100 < 25) || (player.dodge && rand() % 100 < 45)) continue;
-
-                int damage = rand() % (monsters[i].maxAttack - monsters[i].minAttack + 1) + monsters[i].minAttack;
-                player.health -= damage;
-                logEvent("Boss zasahl hrace za " + std::to_string(damage));
-                if (checkIfPlayerDied(player)) return;
-            }
-            bossFirst = false;
-        }
-
-        bool allDead = true;
-        for (int i = 0; i < monsterCount; ++i) {
-            if (monsters[i].health > 0) {
-                allDead = false;
-                break;
-            }
-        }
-        if (allDead) {
-            SetColor(6, 0);
-            std::cout << "Vyhral jsi!\n";
-            if (player.dodge && rand() % 100 < 50) {
-                player.gold += rand() % 30 + 10;
-                std::cout << "Ziskal jsi zlato. Mas " << player.gold << " zlata.\n";
-            }
-            SetColor(7, 0);
-            addXP(player, 5);
-            system("pause");
-            clearScreen();
-            return;
-        }
-
-        SetColor(10, 0);
-        std::cout << "Zivoty: " << player.health << "/" << player.maxHealth << "\n";
-        SetColor(1, 0);
-        std::cout << "Energie: " << player.energy << "/" << player.maxEnergy << "\n";
-        SetColor(7, 0);
-        std::cout << "\nZiva monstra:\n";
         int indexMap[10];
         int aliveCount = 0;
         for (int i = 0; i < monsterCount; ++i) {
             if (monsters[i].health > 0) {
-                SetColor(2, 0);
-                std::cout << (aliveCount + 1) << ": " << (player.isBlind ? "nekdo" : monsters[i].name + " (" + std::to_string(monsters[i].health) + " HP)") << "\n";
-                SetColor(7, 0);
                 indexMap[aliveCount++] = i;
             }
         }
@@ -159,7 +139,6 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            clearScreen();
             continue;
         }
 
@@ -171,7 +150,6 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 std::cout << "Na ktere monstrum utocis <1-" << aliveCount << ">? ";
                 int pick; std::cin >> pick; pick--;
                 if (pick < 0 || pick >= aliveCount) {
-                    clearScreen();
                     continue;
                 }
                 target = indexMap[pick];
@@ -179,65 +157,119 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
         }
 
         if (choice == 1) {
+            clearScreen();
             int damage = player.attack;
             if (player.isBlind) damage *= 1.5;
             monsters[target].health -= damage;
+
+            const char* phrase = attackPhrases[rand() % 5];
+            char buffer[256];
+            sprintf(buffer, phrase, monsters[target].name.c_str(), damage);
+            SetColor(5, 0);
+            std::cout << buffer << "\n";
+            SetColor(7, 0);
+
             logEvent("Utocis na " + monsters[target].name + " za " + std::to_string(damage));
-            clearScreen();
             addXP(player, 5);
+
             if (player.vampire && monsters[target].health <= 0) {
-                player.health = std::min(player.maxHealth, player.health + player.maxHealth / 4);
+                int heal = player.maxHealth / 4;
+                player.health = std::min(player.maxHealth, player.health + heal);
                 SetColor(14, 0);
-                std::cout << "Jako upir sis vylecil " << player.maxHealth / 4 << " zivotu\n";
+                std::cout << "Jako upir sis vylecil " << heal << " zivotu\n";
                 SetColor(7, 0);
-                system("pause");
             }
+
             if (player.energy < player.maxEnergy) player.energy++;
+
         } else if (choice == 2) {
+            clearScreen();
             if (player.energy >= 3) {
                 player.energy -= 3;
                 int spellDamage = player.attack * 2;
                 monsters[target].health -= spellDamage;
+
+                const char* phrase = spellPhrases[rand() % 5];
+                char buffer[256];
+                sprintf(buffer, phrase, monsters[target].name.c_str(), spellDamage);
+                SetColor(1, 0);
+                std::cout << buffer << "\n";
+                SetColor(7, 0);
+
                 logEvent("Pouzil jsi kouzlo na " + monsters[target].name + " za " + std::to_string(spellDamage));
-                clearScreen();
                 addXP(player, 5);
             } else {
                 SetColor(4, 0);
                 std::cout << "Nemas dost energie na kouzlo!\n";
                 SetColor(7, 0);
-                system("pause");
+                waitForKeyPress();
                 continue;
             }
         } else if (choice == 3) {
             if (player.energy >= 2) {
+                clearScreen();
                 player.energy -= 2;
                 int healAmount = 4;
                 player.health = std::min(player.maxHealth, player.health + healAmount);
+                SetColor(10, 0);
+                std::cout << "Vylecil sis " << healAmount << " zivotu!\n";
+                SetColor(7, 0);
+
                 logEvent("Vylecil sis " + std::to_string(healAmount) + " zivotu");
-                clearScreen();
                 addXP(player, 5);
-                continue;
             } else {
                 SetColor(4, 0);
                 std::cout << "Nemas dost energie na leceni!\n";
                 SetColor(7, 0);
-                system("pause");
+                waitForKeyPress();
                 continue;
             }
         } else {
-            clearScreen();
             continue;
         }
 
         for (int i = 0; i < monsterCount; ++i) {
             if (monsters[i].health <= 0) continue;
 
-            if ((!player.dodge && rand() % 100 < 25) || (player.dodge && rand() % 100 < 45)) continue;
+            int hitChance = player.dodge ? 45 : 25;
+            if (rand() % 100 < hitChance) continue;
 
             int damage = rand() % (monsters[i].maxAttack - monsters[i].minAttack + 1) + monsters[i].minAttack;
             player.health -= damage;
             logEvent(monsters[i].name + " zasahl hrace za " + std::to_string(damage));
+
+            SetColor(4, 0);
+            std::cout << monsters[i].name << " te zasahl za " << damage << " zivotu!\n";
+            SetColor(7, 0);
+
             if (checkIfPlayerDied(player)) return;
         }
+
+        bool allDead = true;
+        for (int i = 0; i < monsterCount; ++i) {
+            if (monsters[i].health > 0) {
+                allDead = false;
+                break;
+            }
+        }
+        if (allDead) {
+            SetColor(6, 0);
+            std::cout << "Vyhral jsi!\n";
+
+            int chanceToGetGold = activeBoss ? 100 : (player.dodge ? 65 : 50);
+            if (rand() % 100 < chanceToGetGold) {
+                int gold = rand() % 30 + 10;
+                player.gold += gold;
+                std::cout << "Ziskal jsi " << gold << " zlata. Mas celkem " << player.gold << " zlata.\n";
+            }
+
+            SetColor(7, 0);
+            addXP(player, 5);
+            waitForKeyPress();
+            clearScreen();
+            return;
+        }
+
+        //waitForKeyPress();
     }
 }

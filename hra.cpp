@@ -6,6 +6,7 @@
 #include <vector>
 #include <functional>
 #include <ctime>
+#include <conio.h>
 #include "resources/barvy.h"
 #include "resources/character.h"
 #include "resources/backstory.h"
@@ -30,7 +31,7 @@ Character chooseClass() {
         std::cout << "[2] Mnich     -> Hned na zacatku hry sance ze ho buh spasi je 100%\n";
         std::cout << "[3] Upir      -> Kdyz nekoho zabije normalnim utokem tak si vyleci ctvrtinu zivotu\n";
         std::cout << "[4] Gambler   -> Kdyz vejde do vesnice tak ma nahodny pocet penez az 200\n";
-        std::cout << "[5] Zlodej    -> Lepe se vyhyba utokum\n";
+        std::cout << "[5] Zlodej    -> Lepe se vyhyba utokum a ma vetsi sanci na ziskani penez\n";
         std::cin >> choice;
         if (std::cin.fail()) {
             std::cin.clear();
@@ -94,9 +95,9 @@ int main() {
   / // _` / _/ _` |  _/ -_) / /
  /___\__,_\__\__,_|\__\___|_\_\
                            )" << '\n';
-    system("pause");
+    waitForKeyPress();
     clearScreen();
-SetColor(7, 0); //bila
+    SetColor(7, 0); //bila
     village(player);
 //goblin
     Monster boj1[1] = {
@@ -123,7 +124,7 @@ SetColor(7, 0); //bila
 SetColor(7, 0); //bila
 //MB sliz
     Monster MB1[1] = {
-        {"Obrovsky sliz", 15 + rand() % 8, 3, 4, true},
+        {"Obrovsky sliz", 25 + rand() % 8, 3, 4, true},
     };
     fight(player, MB1, 1);
         village(player);
@@ -147,9 +148,9 @@ while (true) {
         clearScreen();
         std::cout << "nachazis se ve VINES.\n";
         std::cout << "citis vuni prirody a " << (player.isBlind ? "slysis brouky.\n" : "vidis brouky.\n");
-        system("pause");
+        waitForKeyPress();
         Monster boj4[1] = {
-            {"Kenku", 12 + rand() % 6, 2, 6},
+            {"Kenku", 18 + rand() % 6, 2, 6},
         };
         fight(player, boj4, 1);
         Monster boj5[3] = {
@@ -163,9 +164,9 @@ while (true) {
         clearScreen();
         std::cout << "nachazis se v UNDERDARKU.\n";
         std::cout << "citis smrad\n";
-        system("pause");
+        waitForKeyPress();
         Monster boj4[1] = {
-            {"Drow", 12 + rand() % 8, 3, 6},
+            {"Grimlock", 18 + rand() % 8, 3, 6},
         };
         fight(player, boj4, 1);
         Monster boj5[3] = {

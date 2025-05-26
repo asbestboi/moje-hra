@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <conio.h>
 void SetColor(int textColor, int bgColor) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, (bgColor << 4) + textColor);
@@ -58,4 +59,10 @@ void drawHeaderLine() {
     }
     std::cout << std::endl;
     SetColor(7, 0);
+}
+void waitForKeyPress() {
+    SetColor(8, 0); //seda
+    std::cout << "Zmacknete klavesu pro pokracovani...\n";
+    SetColor(7, 0);
+    _getch();
 }

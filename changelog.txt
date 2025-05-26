@@ -63,4 +63,14 @@
 20/05/2025
 >pridane linky
 >pridan header na vesnici
->lepsi implementace headeru
+>lepsi implementace header
+
+22/05/2025
+>existujici linux verze (neverejna)
+
+26/05/2025
+>opraveny kompilator
+>opravene ziskavani penez
+>zmena "stisk klavesy pro pokracovani" veci, ted funguje vsude a lepe
+>znacny buff nepratel
+>pokazil se vscode takze asi chvilku budu delat v code:blocks

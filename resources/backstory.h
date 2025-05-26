@@ -55,6 +55,6 @@ void generateBackstory(Character &player) {
     l.applyStat(player);
     r.applyStat(player);
 
-    system("pause");
+    waitForKeyPress();
     clearScreen();
 }
