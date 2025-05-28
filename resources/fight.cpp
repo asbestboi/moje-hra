@@ -8,7 +8,6 @@
 const char* attackPhrases[] = {
     "Zasahl jsi %s a zpusobil %d poskozeni!",
     "Tvuj utok na %s byl silny udelal %d dmg!",
-    "Dorazil jsi %s za %d!",
     "Tvuj mec zasahl %s a ubral %d zivota.",
     "Rozdrtil jsi %s a vzal mu %d HP!"
 };
@@ -150,6 +149,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 std::cout << "Na ktere monstrum utocis <1-" << aliveCount << ">? ";
                 int pick; std::cin >> pick; pick--;
                 if (pick < 0 || pick >= aliveCount) {
+                    clearScreen();
                     continue;
                 }
                 target = indexMap[pick];
@@ -164,7 +164,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
 
             const char* phrase = attackPhrases[rand() % 5];
             char buffer[256];
-            sprintf(buffer, phrase, monsters[target].name.c_str(), damage);
+            sprintf(buffer, phrase, (player.isBlind ? "nekdo" : monsters[target].name.c_str()), damage);
             SetColor(5, 0);
             std::cout << buffer << "\n";
             SetColor(7, 0);
@@ -203,6 +203,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 std::cout << "Nemas dost energie na kouzlo!\n";
                 SetColor(7, 0);
                 waitForKeyPress();
+                clearScreen();
                 continue;
             }
         } else if (choice == 3) {
@@ -222,6 +223,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 std::cout << "Nemas dost energie na leceni!\n";
                 SetColor(7, 0);
                 waitForKeyPress();
+                clearScreen();
                 continue;
             }
         } else {
@@ -236,11 +238,14 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
 
             int damage = rand() % (monsters[i].maxAttack - monsters[i].minAttack + 1) + monsters[i].minAttack;
             player.health -= damage;
-            logEvent(monsters[i].name + " zasahl hrace za " + std::to_string(damage));
+
+            logEvent((player.isBlind ? "nekdo" : monsters[i].name) + " zasahl hrace za " + std::to_string(damage));
 
             SetColor(4, 0);
-            std::cout << monsters[i].name << " te zasahl za " << damage << " zivotu!\n";
+            std::cout << (player.isBlind ? "nekdo" : monsters[i].name) << " te zasahl za " << damage << " zivotu!\n";
             SetColor(7, 0);
+
+
 
             if (checkIfPlayerDied(player)) return;
         }
