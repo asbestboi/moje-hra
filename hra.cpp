@@ -159,6 +159,12 @@ while (true) {
             {"Brouk", 3 + rand() % 8, 1, 3},
         };
         fight(player, boj5, 3);
+                Monster boj6[3] = {
+        {"Zivy listnaty strom", 15 + rand() % 8, 4, 5},
+        {"Zivy listnaty strom", 15 + rand() % 8, 4, 5},
+        {"Zivy jehlicnaty strom", 20 + rand() % 8, 4, 5},
+        };
+        fight(player, boj6, 3);
         break;
     } else if (choice == 2) {
         clearScreen();
@@ -175,6 +181,12 @@ while (true) {
             {"Pavouk", 3 + rand() % 6, 2, 3},
         };
         fight(player, boj5, 3);
+        Monster boj6[3] = {
+        {"Temny elf", 15 + rand() % 8, 3, 5},
+        {"Temny elf", 15 + rand() % 8, 3, 5},
+        {"Temny mag", 20 + rand() % 8, 4, 7},
+        };
+        fight(player, boj6, 3);
         break;
     } else {
         clearScreen();

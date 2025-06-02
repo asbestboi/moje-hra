@@ -218,6 +218,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
 
                 logEvent("Vylecil sis " + std::to_string(healAmount) + " zivotu");
                 addXP(player, 5);
+                continue;
             } else {
                 SetColor(4, 0);
                 std::cout << "Nemas dost energie na leceni!\n";
@@ -227,6 +228,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 continue;
             }
         } else {
+            clearScreen();
             continue;
         }
 

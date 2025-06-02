@@ -74,3 +74,9 @@
 >zmena "stisk klavesy pro pokracovani" veci, ted funguje vsude a lepe
 >znacny buff nepratel
 >pokazil se vscode takze asi chvilku budu delat v code:blocks
+
+28/05/2025
+>opraveny clearscreen v souboji a nejake veci ohledne slepce v souboji
+
+02/06/2025
+>opraveny souboj a pridane enemy
