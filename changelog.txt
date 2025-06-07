@@ -80,3 +80,8 @@
 
 02/06/2025
 >opraveny souboj a pridane enemy
+
+07/06/2025
+>pridan zvuk, zvukove efekty a hudba
+>boss ted utoci hned na zacatku souboje/bugfix
+>opravene funkce v fight

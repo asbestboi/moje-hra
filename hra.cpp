@@ -16,7 +16,6 @@
 //https://stackoverflow.com/questions/24776262/pause-console-in-c-program
 //https://www.w3schools.com/cpp/ref_fstream_fstream.asp
 //https://cplusplus.com/reference/fstream/ofstream/
-
 Character chooseClass() {
     int choice;
     Character player;
@@ -83,7 +82,9 @@ Character chooseClass() {
     }
 }
 int main() {
+    PlaySound("resources/choose.wav", NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
     srand(time(0));
+    //std::cin.get();
     Character player = chooseClass();
     generateBackstory(player);
     SetColor(10, 0); //zelena
@@ -97,6 +98,7 @@ int main() {
                            )" << '\n';
     waitForKeyPress();
     clearScreen();
+    PlaySound(NULL, NULL, 0);
     SetColor(7, 0); //bila
     village(player);
 //goblin
@@ -131,6 +133,7 @@ SetColor(7, 0); //bila
     int choice = 0;
 while (true) {
     clearScreen();
+    PlaySound("resources/sounds/appear.wav", NULL, SND_FILENAME | SND_ASYNC);
     std::cout << (player.isBlind ? "vis ze pred tebou jsou dve cesty, nevis kam vedou\n" : "pred tebou se nachazi 2 cesty ta prvni je zarostla a vede do kopce, ta druha vede z kopce do tmy\n");
     std::cout << "[1] do kopce\n";
     std::cout << "[2] z kopce\n";

@@ -3,10 +3,11 @@
 void village(Character &player) {
     int drunkness = 0;
     bool visitedChurch = false;
+    PlaySound("resources/sounds/appear.wav", NULL, SND_FILENAME | SND_ASYNC);
     printAsciiArt("vesnice");
 
     waitForKeyPress();
-
+    PlaySound("resources/shop.wav", NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
     if (player.gamble == true) {
         player.gold = rand() % 151;
     }
@@ -45,6 +46,7 @@ void village(Character &player) {
         if (mainChoice == 1) {
             if (drunkness == 3) {
                     clearScreen();
+                    PlaySound(NULL, NULL, 0);
                     std::cout << "Ty hlupaku! Opil jses do nemoty, probouzis se na uplne nahodnem miste mimo vesnici.\n";
                     waitForKeyPress();
                     break;
@@ -67,7 +69,7 @@ void village(Character &player) {
                         drunkness++;
                         if (drunkness == 1) {
                             std::cout << "Osvezujici pivo!\n";
-                        } else if (drunkness == 2) { 
+                        } else if (drunkness == 2) {
                             std::cout << "V krcme je velka zabava!\n";
                         } else if (drunkness == 3) {
                             std::cout << "Citis se opily, asi bys mel prestat pit.\n";
@@ -170,6 +172,7 @@ void village(Character &player) {
         } else if (mainChoice == 4) {
             clearScreen();
             std::cout << "Opustil jsi vesnici.\n";
+            PlaySound(NULL, NULL, 0);
             waitForKeyPress();
             break;
         } else {

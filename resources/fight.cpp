@@ -4,7 +4,9 @@
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
-
+void attacksound() {
+    PlaySound("resources/sounds/attack.wav", NULL, SND_FILENAME | SND_ASYNC);
+}
 const char* attackPhrases[] = {
     "Zasahl jsi %s a zpusobil %d poskozeni!",
     "Tvuj utok na %s byl silny udelal %d dmg!",
@@ -52,6 +54,8 @@ void addXP(Character& player, int amount) {
 bool checkIfPlayerDied(Character &player) {
     if (player.health <= 0) {
         if (rand() % 100 < player.blessingChance) {
+            PlaySound(NULL, NULL, 0);
+            PlaySound("resources/sounds/blessed.wav", NULL, SND_FILENAME | SND_ASYNC);
             clearScreen();
             SetColor(6, 0);
             printAsciiArt("blessed");
@@ -97,6 +101,7 @@ void showCurrentStats(Character &player, Monster monsters[], int monsterCount) {
 void fight(Character &player, Monster monsters[], int monsterCount) {
     drawHeaderLine();
     SetColor(4, 0);
+    PlaySound("resources/sounds/appear.wav", NULL, SND_FILENAME | SND_ASYNC);
     std::cout << "Pred tebou stoji " << monsterCount;
     if (monsterCount < 5 && monsterCount != 1) {
         std::cout << " nepratele!\n";
@@ -116,6 +121,26 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
     }
 
     while (player.health > 0) {
+        if (activeBoss) {
+        for (int i = 0; i < monsterCount; ++i) {
+            if (!monsters[i].isBoss || monsters[i].health <= 0) continue;
+
+            int hitChance = player.dodge ? 45 : 25;
+            if (rand() % 100 < hitChance) continue;
+
+            int damage = rand() % (monsters[i].maxAttack - monsters[i].minAttack + 1) + monsters[i].minAttack;
+            player.health -= damage;
+
+            logEvent("Boss " + monsters[i].name + " zahajil utok na hrace za " + std::to_string(damage));
+
+            SetColor(4, 0);
+            std::cout << "Boss " << monsters[i].name << " zahajil utok a zasahl te za " << damage << " zivotu!\n";
+            SetColor(7, 0);
+
+            if (checkIfPlayerDied(player)) return;
+            }
+        waitForKeyPress();
+        }
         //clearScreen();
         drawHeaderLine();
         showCurrentStats(player, monsters, monsterCount);
@@ -138,6 +163,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            clearScreen();
             continue;
         }
 
@@ -170,8 +196,8 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
             SetColor(7, 0);
 
             logEvent("Utocis na " + monsters[target].name + " za " + std::to_string(damage));
+            attacksound();
             addXP(player, 5);
-
             if (player.vampire && monsters[target].health <= 0) {
                 int heal = player.maxHealth / 4;
                 player.health = std::min(player.maxHealth, player.health + heal);
@@ -195,7 +221,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 SetColor(1, 0);
                 std::cout << buffer << "\n";
                 SetColor(7, 0);
-
+                attacksound();
                 logEvent("Pouzil jsi kouzlo na " + monsters[target].name + " za " + std::to_string(spellDamage));
                 addXP(player, 5);
             } else {
