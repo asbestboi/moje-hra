@@ -1,2 +1,2 @@
 # moje-hra
-![Logo](CrownOfHornsRPG.lnk)
+![Logo](resources/extras/icon.png)
