@@ -121,7 +121,15 @@ void village(Character &player) {
                 std::cout << "["; SetColor(10, 0); std::cout << "1"; SetColor(7, 0); std::cout << "] Vylepsit zivoty o 5"; SetColor(6, 0); std::cout << " (15 zlata)\n";SetColor(7, 0);
                 std::cout << "["; SetColor(1, 0); std::cout << "2"; SetColor(7, 0); std::cout << "] Vylepsit energii o 5"; SetColor(6, 0); std::cout << " (20 zlata)\n";SetColor(7, 0);
                 std::cout << "["; SetColor(5, 0); std::cout << "3"; SetColor(7, 0); std::cout << "] Vylepsit utok o 2"; SetColor(6, 0); std::cout << " (20 zlata)\n";
-                SetColor(4, 0); std::cout << "[4] Zpet do vesnice\n";
+                SetColor(7, 0);
+                std::cout << "------------\n";
+                std::cout << "[4] Koupit lektvar leceni"; SetColor(6, 0); std::cout << " (5 zlata)\n";
+                SetColor(7, 0);
+                std::cout << "[5] Koupit Holy Hand Grenade"; SetColor(6, 0); std::cout << " (15 zlata)\n";
+                SetColor(7, 0);
+                std::cout << "------------\n";
+                SetColor(4, 0);
+                std::cout << "[6] Zpet do vesnice\n";
                 SetColor(7, 0);
                 int shopChoice;
                 std::cin >> shopChoice;
@@ -164,6 +172,26 @@ void village(Character &player) {
                         clearScreen();
                     }
                 } else if (shopChoice == 4) {
+                    if (player.gold >= 5) {
+                        player.gold -= 5;
+                        player.inventory.push_back("Lektvar leceni");
+                        std::cout << "Koupil jsi Lektvar leceni.\n";
+                        waitForKeyPress(); clearScreen();
+                    } else {
+                        std::cout << "Nemas dostatek zlata!\n";
+                        waitForKeyPress();
+                    }
+                } else if (shopChoice == 5) {
+                    if (player.gold >= 15) {
+                        player.gold -= 15;
+                        player.inventory.push_back("Holy Hand Grenade");
+                        std::cout << "Koupil jsi Holy Hand Grenade.\n";
+                        waitForKeyPress(); clearScreen();
+                    } else {
+                        std::cout << "Nemas dostatek zlata!\n";
+                        waitForKeyPress();
+                    }
+                } else if (shopChoice == 6) {
                     break;
                 } else {
                     clearScreen();

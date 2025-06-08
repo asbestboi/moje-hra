@@ -46,10 +46,15 @@ void generateBackstory(Character &player) {
     drawHeaderLine();
     SetColor(7, 0);
     std::cout << "(tohle bude mit dopad na tve staty)\n";
+    Sleep(1200);
     std::cout << "Byl jsi " << c.text << "\n";
+    Sleep(1000);
     std::cout << "Cely zivot ses " << l.text << "\n";
+    Sleep(1000);
     std::cout << "Nakonec se z tebe stal " << player.name << " \n";
+    Sleep(1000);
     std::cout << r.text << "\n";
+    Sleep(1000);
     std::cout << "Opoustis svuj dum.\n";
     c.applyStat(player);
     l.applyStat(player);

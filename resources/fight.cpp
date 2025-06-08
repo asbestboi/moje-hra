@@ -7,6 +7,9 @@
 void attacksound() {
     PlaySound("resources/sounds/attack.wav", NULL, SND_FILENAME | SND_ASYNC);
 }
+void damagesound() {
+    PlaySound("resources/sounds/damage.wav", NULL, SND_FILENAME | SND_ASYNC);
+}
 const char* attackPhrases[] = {
     "Zasahl jsi %s a zpusobil %d poskozeni!",
     "Tvuj utok na %s byl silny udelal %d dmg!",
@@ -54,6 +57,8 @@ void addXP(Character& player, int amount) {
 bool checkIfPlayerDied(Character &player) {
     if (player.health <= 0) {
         if (rand() % 100 < player.blessingChance) {
+            clearScreen();
+            Sleep(1300);
             PlaySound(NULL, NULL, 0);
             PlaySound("resources/sounds/blessed.wav", NULL, SND_FILENAME | SND_ASYNC);
             clearScreen();
@@ -70,9 +75,13 @@ bool checkIfPlayerDied(Character &player) {
             return false;
         } else {
             clearScreen();
+            Sleep(1300);
             SetColor(4, 0);
             printAsciiArt("smrt");
             SetColor(7, 0);
+            PlaySound("resources/sounds/death.wav", NULL, SND_FILENAME | SND_ASYNC);
+            Sleep(1000);
+            waitForKeyPress();
             exit(0);
         }
     }
@@ -111,7 +120,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
     SetColor(7, 0);
     waitForKeyPress();
     clearScreen();
-
+    bool bossHasAttacked = false;
     bool activeBoss = false;
     for (int i = 0; i < monsterCount; ++i) {
         if (monsters[i].isBoss) {
@@ -121,8 +130,8 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
     }
 
     while (player.health > 0) {
-        if (activeBoss) {
-        for (int i = 0; i < monsterCount; ++i) {
+        if (activeBoss && !bossHasAttacked) {
+            for (int i = 0; i < monsterCount; ++i) {
             if (!monsters[i].isBoss || monsters[i].health <= 0) continue;
 
             int hitChance = player.dodge ? 45 : 25;
@@ -132,15 +141,16 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
             player.health -= damage;
 
             logEvent("Boss " + monsters[i].name + " zahajil utok na hrace za " + std::to_string(damage));
-
             SetColor(4, 0);
-            std::cout << "Boss " << monsters[i].name << " zahajil utok a zasahl te za " << damage << " zivotu!\n";
+            std::cout << monsters[i].name << " zahajil utok a zasahl te za " << damage << " zivotu!\n";
+            damagesound();
             SetColor(7, 0);
 
             if (checkIfPlayerDied(player)) return;
-            }
-        waitForKeyPress();
-        }
+    }
+    bossHasAttacked = true;
+}
+
         //clearScreen();
         drawHeaderLine();
         showCurrentStats(player, monsters, monsterCount);
@@ -156,8 +166,8 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
 
         std::cout << "Chces zautocit ["; SetColor(5, 0); std::cout << "1"; SetColor(7, 0);
         std::cout << "], pouzit kouzlo ["; SetColor(1, 0); std::cout << "2"; SetColor(7, 0);
-        std::cout << "] nebo leceni ["; SetColor(10, 0); std::cout << "3"; SetColor(7, 0);
-        std::cout << "]? ";
+        std::cout << "], otevrit inventar ["; SetColor(10, 0); std::cout << "3"; SetColor(7, 0);
+        std::cout << "] nebo schopnost ["; SetColor(14, 0); std::cout << "4"; SetColor(7, 0); std::cout << "]? ";
         int choice;
         std::cin >> choice;
         if (std::cin.fail()) {
@@ -233,27 +243,125 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 continue;
             }
         } else if (choice == 3) {
-            if (player.energy >= 2) {
-                clearScreen();
-                player.energy -= 2;
-                int healAmount = 4;
-                player.health = std::min(player.maxHealth, player.health + healAmount);
-                SetColor(10, 0);
-                std::cout << "Vylecil sis " << healAmount << " zivotu!\n";
-                SetColor(7, 0);
-
-                logEvent("Vylecil sis " + std::to_string(healAmount) + " zivotu");
-                addXP(player, 5);
-                continue;
-            } else {
-                SetColor(4, 0);
-                std::cout << "Nemas dost energie na leceni!\n";
-                SetColor(7, 0);
+            if (player.inventory.empty()) {
+                std::cout << "Tvuj inventar je prazdny!\n";
                 waitForKeyPress();
                 clearScreen();
                 continue;
             }
-        } else {
+            std::cout << "Tvuj inventar:\n";
+            for (size_t i = 0; i < player.inventory.size(); ++i) {
+                std::cout << i + 1 << ". " << player.inventory[i] << "\n";
+            }
+            std::cout << "Vyber cislo itemu: ";
+            int itemChoice;
+            std::cin >> itemChoice;
+            itemChoice--;
+
+            if (itemChoice < 0 || itemChoice >= player.inventory.size()) {
+                std::cout << "Neplatny vyber.\n";
+                waitForKeyPress();
+                clearScreen();
+                continue;
+            }
+
+            std::string item = player.inventory[itemChoice];
+            if (item == "Lektvar leceni") {
+                int heal = 6;
+                player.health = std::min(player.maxHealth, player.health + heal);
+                std::cout << "Pouzil jsi lektvar a vylecil " << heal << " zivotu.\n";
+            } else if (item == "Holy Hand Grenade") {
+                for (int i = 0; i < monsterCount; ++i)
+                    if (monsters[i].health > 0) monsters[i].health -= 3;
+                std::cout << "Hodil jsi Holy Hand Grenade! Vsechna monstra utrpela 3 poskozeni.\n";
+            } else if (item == "Crucifix") {
+                int damage = 3 + rand() % 3;
+                int heal = 2 + rand() % 5;
+
+                for (int i = 0; i < monsterCount; ++i) {
+                    if (monsters[i].health > 0)
+                        monsters[i].health -= damage;
+                }
+
+                player.health = std::min(player.maxHealth, player.health + heal);
+
+                std::cout << "Crucifix ozaril vsechny nepratele a zpusobil " << damage << " poskozeni.\n";
+                std::cout << "Zaroven jsi byl vylecen o " << heal << " zivotu.\n";
+            } else if (item == "Totem") {
+                int roll = rand() % 2;
+
+                if (roll == 0) {
+                    player.health = 1;
+                    std::cout << "Totem selhal... prezivas jen s 1 zivotem.\n";
+                } else {
+                    player.health = player.maxHealth;
+                    player.energy = player.maxEnergy;
+                    std::cout << "Totem zablikal silou a plne te obnovil!\n";
+                }
+            } else {
+                std::cout << "Neznamy item!\n";
+            }
+            player.inventory.erase(player.inventory.begin() + itemChoice);
+            waitForKeyPress();
+            clearScreen();
+            continue;
+            }
+        else if (choice == 4) {
+            clearScreen();
+            if (player.energy < 2) {
+                std::cout << "Nemas dost energie na schopnost!\n";
+                waitForKeyPress(); clearScreen(); continue;
+            }
+
+            if (player.name == "slepec") {
+                player.energy -= 2;
+                int dmg = 2 + rand() % 3;
+                for (int i = 0; i < monsterCount; ++i)
+                    if (monsters[i].health > 0)
+                        monsters[i].health -= dmg;
+                std::cout << "Slepy hnev zasahl vsechny nepratele za " << dmg << " poskozeni.\n";
+            } else if (player.name == "mnich") {
+                player.energy -= 2;
+                int heal = 6 + rand() % 5;
+                player.health = std::min(player.maxHealth, player.health + heal);
+                std::cout << "Pomoci modlitby sis vylecil " << heal << " zivotu.\n";
+                if (rand() % 100 < 15) {
+                    player.blessingChance += 10;
+                    std::cout << "Citis, ze Buh te slysi. (+10% blessing chance)\n";
+                }
+            } else if (player.name == "upir") {
+                player.energy += 4;
+                player.health = std::max(1, player.health - 2);
+                std::cout << "Provedl jsi krvavy ritual! Ziskal jsi 4 energie, ale prisel o 2 zivoty.\n";
+            } else if (player.name == "gambler") {
+                player.energy -= 2;
+                int roll = rand() % 2;
+                if (roll == 0) {
+                    player.health = std::max(1, player.health / 2);
+                    std::cout << "Smula! Prisels o polovinu svych zivotu!\n";
+                } else {
+                    player.health = player.maxHealth;
+                    player.energy = player.maxEnergy;
+                    std::cout << "Stesti! Mas plne zivoty i energii!\n";
+                }
+            } else if (player.name == "zlodej") {
+                player.energy -= 2;
+                int stolenGold = 0;
+                for (int i = 0; i < monsterCount; ++i)
+                    if (monsters[i].health <= 0)
+                        stolenGold += 5 + rand() % 11; // 5–15
+                if (stolenGold > 0) {
+                    player.gold += stolenGold;
+                    std::cout << "Ukradls " << stolenGold << " zlata z kapes porazenych monster.\n";
+                } else {
+                    std::cout << "Nebyl nikdo k okradeni.\n";
+                }
+            }
+
+            waitForKeyPress(); clearScreen();
+            continue;
+        }
+        else {
             clearScreen();
             continue;
         }
@@ -263,16 +371,16 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
 
             int hitChance = player.dodge ? 45 : 25;
             if (rand() % 100 < hitChance) continue;
-
+            Sleep(400);
             int damage = rand() % (monsters[i].maxAttack - monsters[i].minAttack + 1) + monsters[i].minAttack;
             player.health -= damage;
-
+            damagesound();
             logEvent((player.isBlind ? "nekdo" : monsters[i].name) + " zasahl hrace za " + std::to_string(damage));
 
             SetColor(4, 0);
             std::cout << (player.isBlind ? "nekdo" : monsters[i].name) << " te zasahl za " << damage << " zivotu!\n";
+            //(Sleep(400);
             SetColor(7, 0);
-
 
 
             if (checkIfPlayerDied(player)) return;
@@ -295,7 +403,21 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 player.gold += gold;
                 std::cout << "Ziskal jsi " << gold << " zlata. Mas celkem " << player.gold << " zlata.\n";
             }
+                int lootRoll = rand() % 100;
 
+            if (lootRoll < 30) {
+                player.inventory.push_back("Lektvar leceni");
+                std::cout << "Nasel jsi Lektvar leceni!\n";
+            } else if (lootRoll < 50) {
+                player.inventory.push_back("Holy Hand Grenade");
+                std::cout << "Nasel jsi Holy Hand Grenade!\n";
+            } else if (lootRoll < 60) {
+                player.inventory.push_back("Crucifix");
+                std::cout << "Nasel jsi Crucifix!\n";
+            } else if (lootRoll < 65) {
+                player.inventory.push_back("Totem");
+                std::cout << "Nasel jsi zvlastni totem.\n";
+            }
             SetColor(7, 0);
             addXP(player, 5);
             waitForKeyPress();
