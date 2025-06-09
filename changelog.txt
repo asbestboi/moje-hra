@@ -90,3 +90,8 @@
 >pridane zvuky
 >pridan inventar a itemy v nem
 >kazdy class ma ted schopnost
+
+09/06/2025
+>vylepsen README.md
+>opraven loop v souboji (snad)
+>SFML bylo neuspesne a proto to pridam pozdeji nebo vubec

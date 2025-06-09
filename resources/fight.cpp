@@ -32,7 +32,11 @@ void logEvent(const std::string& text) {
         log.close();
     }
 }
-
+bool areAllMonstersDead(Monster monsters[], int count) {
+    for (int i = 0; i < count; ++i)
+        if (monsters[i].health > 0) return false;
+    return true;
+}
 void addXP(Character& player, int amount) {
     player.xp += amount;
     while (player.xp >= 50) {
@@ -273,6 +277,9 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
             } else if (item == "Holy Hand Grenade") {
                 for (int i = 0; i < monsterCount; ++i)
                     if (monsters[i].health > 0) monsters[i].health -= 3;
+                    if (areAllMonstersDead(monsters, monsterCount)) {
+                    waitForKeyPress(); clearScreen(); break;
+                    }
                 std::cout << "Hodil jsi Holy Hand Grenade! Vsechna monstra utrpela 3 poskozeni.\n";
             } else if (item == "Crucifix") {
                 int damage = 3 + rand() % 3;
@@ -281,6 +288,9 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 for (int i = 0; i < monsterCount; ++i) {
                     if (monsters[i].health > 0)
                         monsters[i].health -= damage;
+                if (areAllMonstersDead(monsters, monsterCount)) {
+                waitForKeyPress(); clearScreen(); break;
+                }
                 }
 
                 player.health = std::min(player.maxHealth, player.health + heal);
@@ -314,12 +324,17 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
             }
 
             if (player.name == "slepec") {
-                player.energy -= 2;
-                int dmg = 2 + rand() % 3;
-                for (int i = 0; i < monsterCount; ++i)
-                    if (monsters[i].health > 0)
-                        monsters[i].health -= dmg;
-                std::cout << "Slepy hnev zasahl vsechny nepratele za " << dmg << " poskozeni.\n";
+                    player.energy -= 2;
+                    int dmg = 2 + rand() % 3;
+                    for (int i = 0; i < monsterCount; ++i)
+                        if (monsters[i].health > 0)
+                            monsters[i].health -= dmg;
+
+                    std::cout << "Slepy hnev zasahl vsechny nepratele za " << dmg << " poskozeni.\n";
+
+                    if (areAllMonstersDead(monsters, monsterCount)) {
+                        waitForKeyPress(); clearScreen(); break;
+                    }
             } else if (player.name == "mnich") {
                 player.energy -= 2;
                 int heal = 6 + rand() % 5;

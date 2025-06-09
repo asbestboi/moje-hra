@@ -82,7 +82,7 @@ Character chooseClass() {
     }
 }
 int main() {
-    PlaySound("resources/choose.wav", NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+    PlaySound("resources/choose.wav", NULL, SND_LOOP | SND_ASYNC);
     srand(time(0));
     //std::cin.get();
     Character player = chooseClass();
@@ -135,8 +135,10 @@ while (true) {
     clearScreen();
     PlaySound("resources/sounds/appear.wav", NULL, SND_FILENAME | SND_ASYNC);
     std::cout << (player.isBlind ? "vis ze pred tebou jsou dve cesty, nevis kam vedou\n" : "pred tebou se nachazi 2 cesty ta prvni je zarostla a vede do kopce, ta druha vede z kopce do tmy\n");
+    Sleep(1000);
     std::cout << "[1] do kopce\n";
     std::cout << "[2] z kopce\n";
+    Sleep(1000);
     std::cout << "Vyber 1 nebo 2: ";
     std::cin >> choice;
 
@@ -150,7 +152,9 @@ while (true) {
     if (choice == 1) {
         clearScreen();
         std::cout << "nachazis se ve VINES.\n";
+        Sleep(1000);
         std::cout << "citis vuni prirody a " << (player.isBlind ? "slysis brouky.\n" : "vidis brouky.\n");
+        Sleep(1000);
         waitForKeyPress();
         Monster boj4[1] = {
             {"Kenku", 18 + rand() % 6, 2, 6},
@@ -172,7 +176,9 @@ while (true) {
     } else if (choice == 2) {
         clearScreen();
         std::cout << "nachazis se v UNDERDARKU.\n";
+        Sleep(1000);
         std::cout << "citis smrad\n";
+        Sleep(1000);
         waitForKeyPress();
         Monster boj4[1] = {
             {"Grimlock", 18 + rand() % 8, 3, 6},
@@ -190,6 +196,37 @@ while (true) {
         {"Temny mag", 20 + rand() % 8, 4, 7},
         };
         fight(player, boj6, 3);
+        break;
+    } else {
+        clearScreen();
+    }
+}
+        while (true) {
+    clearScreen();
+    PlaySound("resources/sounds/appear.wav", NULL, SND_FILENAME | SND_ASYNC);
+    std::cout << "Pred tebou ruzne domy, co udelas?\n";
+    Sleep(1000);
+    std::cout << "[1] prohledas ty domy a zjistis o co jde.\n";
+    std::cout << "[2] vis ze tam jsou nejake budovy ale jdes dal.\n";
+    Sleep(1000);
+    std::cout << "Vyber 1 nebo 2: ";
+    std::cin >> choice;
+    if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        clearScreen();
+        continue;
+    }
+
+    if (choice == 1) {
+        clearScreen();
+        std::cout << "Dvojce.\n";
+        Sleep(1000);
+        break;
+    } else if (choice == 2) {
+        clearScreen();
+        std::cout << "Jdes dal a jses stastny.\n";
+        Sleep(1000);
         break;
     } else {
         clearScreen();
