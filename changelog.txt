@@ -95,3 +95,9 @@
 >vylepsen README.md
 >opraven loop v souboji (snad)
 >SFML bylo neuspesne a proto to pridam pozdeji nebo vubec
+
+10/06/2025
+>pridan lore a 2 bratri (boss path)
+>buff a debuff ruznych veci
+>vylepseni zvuku a pridani zvuku
+>opraveni tragicke gamaticke chyby

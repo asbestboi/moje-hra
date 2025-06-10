@@ -201,6 +201,7 @@ while (true) {
         clearScreen();
     }
 }
+        village(player);
         while (true) {
     clearScreen();
     PlaySound("resources/sounds/appear.wav", NULL, SND_FILENAME | SND_ASYNC);
@@ -220,16 +221,51 @@ while (true) {
 
     if (choice == 1) {
         clearScreen();
-        std::cout << "Dvojce.\n";
+        //special fight
+        Monster Chlapec[1] = {
+            {"Chlapec", 15 + rand() % 10, 6, 9, true},
+        };
+        fight(player, Chlapec, 1);
         Sleep(1000);
         break;
     } else if (choice == 2) {
         clearScreen();
         std::cout << "Jdes dal a jses stastny.\n";
         Sleep(1000);
+        waitForKeyPress();
         break;
     } else {
         clearScreen();
     }
 }
+if (choice == 1) {
+        clearScreen();
+        //check na milost
+        std::cout << "wow potkal jsi druheho chlapce ktery vypada podobne jak ten minuly!\n";
+        if (player.mercy == true) {
+            waitForKeyPress();
+            clearScreen();
+            std::cout << "diky moc zes nezabil meho bratra, byl jen vystraseny a proto utocil. Tady mas \n";
+            waitForKeyPress();
+        } else if (player.mercy == false) {
+            waitForKeyPress();
+            clearScreen();
+            std::cout << "ty...\n";
+            waitForKeyPress();
+            std::cout << "zabil jsi meho bratra...\n";
+            waitForKeyPress();
+            std::cout << "TED BUDES TRPET. POMSTIM HO!!!\n";
+            waitForKeyPress();
+                Monster Chlapec[2] = {
+            {"Silny Chlapec", 70 + rand() % 5, 9, 12, true},
+        };
+        fight(player, Chlapec, 1);
+        }
+            waitForKeyPress();
+        //break;
+    } else if (choice == 2) {
+        std::cout << "nikoho jsi nepotkal\n";
+            waitForKeyPress();
+    }
+//pokracovani
 }
