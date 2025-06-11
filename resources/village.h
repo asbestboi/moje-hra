@@ -1,7 +1,11 @@
 #pragma once
 #include "utility.h"
 void village(Character &player) {
+    int cena = 5;
     int drunkness = 0;
+    int cenaHealthUpgrade = 15;
+    int cenaEnergyUpgrade = 20;
+    int cenaAttackUpgrade = 20;
     bool visitedChurch = false;
     PlaySound("resources/sounds/appear.wav", NULL, SND_FILENAME | SND_ASYNC);
     printAsciiArt("vesnice");
@@ -13,6 +17,15 @@ void village(Character &player) {
     }
 
     while (true) {
+        if (player.charisma >= 60) {
+            cena = 1;
+        } else if (player.charisma >= 50) {
+            cena = 2;
+        } else if (player.charisma >= 40) {
+            cena = 3;
+        } else if (player.charisma >= 30) {
+            cena = 4;
+        }
         clearScreen();
         SetColor(10, 0);
         std::cout << "Zivoty: " << player.health << "/" << player.maxHealth << "\n";
@@ -27,7 +40,7 @@ void village(Character &player) {
         printCentered("VESNICE");
         drawHeaderLine();
         SetColor(7, 0);
-        std::cout << "[1] Jit do krcmy (obnovis si zivoty a energii a vylepsis charisma za 5 zlata)\n";
+        std::cout << "[1] Jit do krcmy (obnovis si zivoty a energii a vylepsis charisma za " << cena << " zlata)\n";
         std::cout << "[2] Jit do kostela (zde se modlis a ziskas sanci ze te buh ochrani)\n";
         std::cout << "[3] Jit do obchodu (muzes nakupovat upgrady za zlato)\n";
         SetColor(4, 0);
@@ -51,17 +64,6 @@ void village(Character &player) {
                     waitForKeyPress();
                     break;
                 } else {
-                    int cena = 5;
-
-                    //sleva podle charisma
-                    if (player.charisma >= 55) {
-                        cena = 2;
-                    } else if (player.charisma >= 45) {
-                        cena = 3;
-                    } else if (player.charisma >= 30) {
-                        cena = 4;
-                    }
-
                     if (player.gold >= cena) {
                         clearScreen();
                         std::cout << "V krcme je veselo. Das si pivko a na chvilku si odpocines. (obnovil sis zivoty a energii)\n";
@@ -107,7 +109,7 @@ void village(Character &player) {
             waitForKeyPress();
         } else if (mainChoice == 3) {
             while (true) {
-                clearScreen();
+                                clearScreen();
                 SetColor(10, 0);
                 std::cout << "Zivoty: " << player.health << "/" << player.maxHealth << "\n";
                 SetColor(1, 0);
@@ -118,9 +120,9 @@ void village(Character &player) {
                 std::cout << "Zlato: " << player.gold << "\n";
                 SetColor(7, 0);
                 std::cout << "---OBCHOD---\n";
-                std::cout << "["; SetColor(10, 0); std::cout << "1"; SetColor(7, 0); std::cout << "] Vylepsit zivoty o 5"; SetColor(6, 0); std::cout << " (15 zlata)\n";SetColor(7, 0);
-                std::cout << "["; SetColor(1, 0); std::cout << "2"; SetColor(7, 0); std::cout << "] Vylepsit energii o 5"; SetColor(6, 0); std::cout << " (20 zlata)\n";SetColor(7, 0);
-                std::cout << "["; SetColor(5, 0); std::cout << "3"; SetColor(7, 0); std::cout << "] Vylepsit utok o 2"; SetColor(6, 0); std::cout << " (20 zlata)\n";
+                std::cout << "["; SetColor(10, 0); std::cout << "1"; SetColor(7, 0); std::cout << "] Vylepsit zivoty o 5 "; SetColor(6, 0); std::cout << "(" << cenaHealthUpgrade << " zlata)\n";SetColor(7, 0);
+                std::cout << "["; SetColor(1, 0); std::cout << "2"; SetColor(7, 0); std::cout << "] Vylepsit energii o 5 "; SetColor(6, 0); std::cout << "(" << cenaEnergyUpgrade << " zlata)\n";SetColor(7, 0);
+                std::cout << "["; SetColor(5, 0); std::cout << "3"; SetColor(7, 0); std::cout << "] Vylepsit utok o 2 "; SetColor(6, 0); std::cout << "(" << cenaAttackUpgrade << " zlata)\n";
                 SetColor(7, 0);
                 std::cout << "------------\n";
                 std::cout << "[4] Koupit lektvar leceni"; SetColor(6, 0); std::cout << " (5 zlata)\n";
@@ -142,9 +144,10 @@ void village(Character &player) {
                 }
 
                 if (shopChoice == 1) {
-                    if (player.gold >= 15) {
-                        player.gold -= 15;
+                    if (player.gold >= cenaHealthUpgrade) {
+                        player.gold -= cenaHealthUpgrade;
                         player.maxHealth += 5;
+                        cenaHealthUpgrade += cenaHealthUpgrade/4;
                         clearScreen();
                     } else {
                         std::cout << "Nemas dostatek zlata!\n";
@@ -152,9 +155,10 @@ void village(Character &player) {
                         clearScreen();
                     }
                 } else if (shopChoice == 2) {
-                    if (player.gold >= 20) {
-                        player.gold -= 20;
+                    if (player.gold >= cenaEnergyUpgrade) {
+                        player.gold -= cenaEnergyUpgrade;
                         player.maxEnergy += 5;
+                        cenaEnergyUpgrade += cenaEnergyUpgrade/4;
                         clearScreen();
                     } else {
                         std::cout << "Nemas dostatek zlata!\n";
@@ -162,9 +166,10 @@ void village(Character &player) {
                         clearScreen();
                     }
                 } else if (shopChoice == 3) {
-                    if (player.gold >= 20) {
-                        player.gold -= 20;
+                    if (player.gold >= cenaAttackUpgrade) {
+                        player.gold -= cenaAttackUpgrade;
                         player.attack += 2;
+                        cenaAttackUpgrade += cenaAttackUpgrade/4;
                         clearScreen();
                     } else {
                         std::cout << "Nemas dostatek zlata!\n";
@@ -179,7 +184,7 @@ void village(Character &player) {
                         waitForKeyPress(); clearScreen();
                     } else {
                         std::cout << "Nemas dostatek zlata!\n";
-                        waitForKeyPress();
+                        waitForKeyPress(); clearScreen();
                     }
                 } else if (shopChoice == 5) {
                     if (player.gold >= 15) {
@@ -189,7 +194,7 @@ void village(Character &player) {
                         waitForKeyPress(); clearScreen();
                     } else {
                         std::cout << "Nemas dostatek zlata!\n";
-                        waitForKeyPress();
+                        waitForKeyPress(); clearScreen();
                     }
                 } else if (shopChoice == 6) {
                     break;

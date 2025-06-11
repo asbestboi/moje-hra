@@ -101,3 +101,9 @@
 >buff a debuff ruznych veci
 >vylepseni zvuku a pridani zvuku
 >opraveni tragicke gamaticke chyby
+
+11/06/2025
+>loop v boji byl opraven, uz neni moznost ho tam vubec mit
+>opravena milost, pokud se rozhodnete byt hodny tak to hra nebude brat naopak
+>ted lze videt kolik zaplatite v hospode i s charisma slevou
+>cena veci v obchode se bude menit podle toho kolikrat to hrac koupi

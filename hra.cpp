@@ -241,11 +241,12 @@ while (true) {
 if (choice == 1) {
         clearScreen();
         //check na milost
-        std::cout << "wow potkal jsi druheho chlapce ktery vypada podobne jak ten minuly!\n";
+        std::cout << "Potkal jsi druheho chlapce ktery vypada podobne jak ten minuly!\n";
         if (player.mercy == true) {
             waitForKeyPress();
             clearScreen();
-            std::cout << "diky moc zes nezabil meho bratra, byl jen vystraseny a proto utocil. Tady mas \n";
+            std::cout << "dekuji moc ze jsi nezabil meho bratra, byl jen vystraseny a proto utocil. Tady mas! (hodil ti sacek zlataku)\n";
+            player.gold += 100;
             waitForKeyPress();
         } else if (player.mercy == false) {
             waitForKeyPress();

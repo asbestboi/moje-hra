@@ -116,6 +116,7 @@ void showCurrentStats(Character &player, Monster monsters[], int monsterCount) {
 }
 
 void fight(Character &player, Monster monsters[], int monsterCount) {
+    bool allDead = false;
     drawHeaderLine();
     PlaySound("resources/sounds/appear.wav", NULL, SND_FILENAME | SND_ASYNC);
     SetColor(4, 0);
@@ -159,7 +160,37 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
     }
     bossHasAttacked = true;
 }
+        if (allDead) {
+            SetColor(6, 0);
+            std::cout << "Vyhral jsi!\n";
 
+            int chanceToGetGold = activeBoss ? 100 : (player.dodge ? 65 : 50);
+            if (rand() % 100 < chanceToGetGold) {
+                int gold = rand() % 30 + 10;
+                player.gold += gold;
+                std::cout << "Ziskal jsi " << gold << " zlata. Mas celkem " << player.gold << " zlata.\n";
+            }
+                int lootRoll = rand() % 100;
+
+            if (lootRoll < 30) {
+                player.inventory.push_back("Lektvar leceni");
+                std::cout << "Nasel jsi Lektvar leceni!\n";
+            } else if (lootRoll < 50) {
+                player.inventory.push_back("Holy Hand Grenade");
+                std::cout << "Nasel jsi Holy Hand Grenade!\n";
+            } else if (lootRoll < 60) {
+                player.inventory.push_back("Crucifix");
+                std::cout << "Nasel jsi Crucifix!\n";
+            } else if (lootRoll < 65) {
+                player.inventory.push_back("Totem");
+                std::cout << "Nasel jsi zvlastni totem.\n";
+            }
+            SetColor(7, 0);
+            addXP(player, 5);
+            waitForKeyPress();
+            clearScreen();
+            return;
+        }
         //clearScreen();
         drawHeaderLine();
         showCurrentStats(player, monsters, monsterCount);
@@ -219,7 +250,11 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                         clearScreen();
                         break;
                     }
-                    player.mercy = false;
+                    else {
+                        player.mercy = false;
+                        break;
+                    }
+
                 }
             monsters[target].health -= damage;
 
@@ -301,22 +336,23 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                 for (int i = 0; i < monsterCount; ++i)
                     if (monsters[i].health > 0) monsters[i].health -= 3;
                     if (areAllMonstersDead(monsters, monsterCount)) {
-                    waitForKeyPress(); clearScreen(); break;
-                    attacksound();
+                    waitForKeyPress();
+                    clearScreen();
+                    allDead = true;
+                    //break;
                     }
                 std::cout << "Hodil jsi Holy Hand Grenade! Vsechna monstra utrpela 3 poskozeni.\n";
             } else if (item == "Crucifix") {
                 int damage = 3 + rand() % 3;
                 int heal = 2 + rand() % 5;
-
-                for (int i = 0; i < monsterCount; ++i) {
-                    if (monsters[i].health > 0)
-                        monsters[i].health -= damage;
-                if (areAllMonstersDead(monsters, monsterCount)) {
                 PlaySound("resources/sounds/blessed.wav", NULL, SND_FILENAME | SND_ASYNC);
-                waitForKeyPress(); clearScreen(); break;
-                }
-                }
+
+                if (areAllMonstersDead(monsters, monsterCount)) {
+                    waitForKeyPress();
+                    clearScreen();
+                    allDead = true;
+                    //break;
+                    }
 
                 player.health = std::min(player.maxHealth, player.health + heal);
 
@@ -373,8 +409,10 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                     std::cout << "Citis, ze Buh te slysi. (+10% blessing chance)\n";
                 }
             } else if (player.name == "upir") {
-                player.energy += 4;
-                player.health = std::max(player.maxHealth, player.health - 2);
+                if (player.energy != player.maxEnergy) {
+                    player.energy += 4;
+                }
+                player.health = std::max(1, player.health - 2);
                 std::cout << "Provedl jsi krvavy ritual! Ziskal jsi 4 energie, ale prisel o 2 zivoty.\n";
                 damagesound();
             } else if (player.name == "gambler") {
@@ -425,50 +463,18 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
 
             SetColor(4, 0);
             std::cout << (player.isBlind ? "nekdo" : monsters[i].name) << " te zasahl za " << damage << " zivotu!\n";
-            //(Sleep(400);
             SetColor(7, 0);
 
 
             if (checkIfPlayerDied(player)) return;
         }
 
-        bool allDead = true;
+        allDead = true;
         for (int i = 0; i < monsterCount; ++i) {
             if (monsters[i].health > 0) {
                 allDead = false;
                 break;
             }
-        }
-        if (allDead) {
-            SetColor(6, 0);
-            std::cout << "Vyhral jsi!\n";
-
-            int chanceToGetGold = activeBoss ? 100 : (player.dodge ? 65 : 50);
-            if (rand() % 100 < chanceToGetGold) {
-                int gold = rand() % 30 + 10;
-                player.gold += gold;
-                std::cout << "Ziskal jsi " << gold << " zlata. Mas celkem " << player.gold << " zlata.\n";
-            }
-                int lootRoll = rand() % 100;
-
-            if (lootRoll < 30) {
-                player.inventory.push_back("Lektvar leceni");
-                std::cout << "Nasel jsi Lektvar leceni!\n";
-            } else if (lootRoll < 50) {
-                player.inventory.push_back("Holy Hand Grenade");
-                std::cout << "Nasel jsi Holy Hand Grenade!\n";
-            } else if (lootRoll < 60) {
-                player.inventory.push_back("Crucifix");
-                std::cout << "Nasel jsi Crucifix!\n";
-            } else if (lootRoll < 65) {
-                player.inventory.push_back("Totem");
-                std::cout << "Nasel jsi zvlastni totem.\n";
-            }
-            SetColor(7, 0);
-            addXP(player, 5);
-            waitForKeyPress();
-            clearScreen();
-            return;
         }
 
         //waitForKeyPress();
