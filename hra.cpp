@@ -202,6 +202,10 @@ while (true) {
     }
 }
         village(player);
+        Monster boj7[1] = {
+        {"Temny Executioner", 15 + rand() % 8, 3, 5},
+        };
+        fight(player, boj7, 1);
         while (true) {
     clearScreen();
     PlaySound("resources/sounds/appear.wav", NULL, SND_FILENAME | SND_ASYNC);
@@ -238,6 +242,14 @@ while (true) {
         clearScreen();
     }
 }
+village(player);
+
+        Monster boj8[3] = {
+        {"Bandit", 25 + rand() % 6, 4, 6},
+        {"Bandit", 25 + rand() % 6, 4, 6},
+        {"Bandit s paskou pres oko", 30 + rand() % 6, 5, 8},
+        };
+        fight(player, boj8, 3);
 if (choice == 1) {
         clearScreen();
         //check na milost
@@ -257,16 +269,26 @@ if (choice == 1) {
             waitForKeyPress();
             std::cout << "TED BUDES TRPET. POMSTIM HO!!!\n";
             waitForKeyPress();
+            clearScreen();
+            if(player.isBlind == false) printAsciiArt("chlapec");
+            waitForKeyPress();
                 Monster Chlapec[2] = {
-            {"Silny Chlapec", 70 + rand() % 5, 9, 12, true},
+            {"Silny Chlapec", 70 + rand() % 5, 10, 15, true},
         };
         fight(player, Chlapec, 1);
         }
             waitForKeyPress();
-        //break;
     } else if (choice == 2) {
-        std::cout << "nikoho jsi nepotkal\n";
-            waitForKeyPress();
+        //nic
     }
+    std::cout << "---pred tebou se zjevil mini boss!---\n";
+    if(player.isBlind == false) printAsciiArt("MB2");
+    waitForKeyPress();
+            Monster MB2[2] = {
+        {"Zly Rytir", 50 + rand() % 10, 8, 25},
+        {"Drak", 120 + rand() % 10, 5, 15},
+        };
+        fight(player, MB2, 2);
+    village(player);
 //pokracovani
 }

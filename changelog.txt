@@ -107,3 +107,8 @@
 >opravena milost, pokud se rozhodnete byt hodny tak to hra nebude brat naopak
 >ted lze videt kolik zaplatite v hospode i s charisma slevou
 >cena veci v obchode se bude menit podle toho kolikrat to hrac koupi
+
+15/06/2025
+>pridan dobry pocet enemy a vic ascii artu
+>opraven mercy
+>buff nepratel

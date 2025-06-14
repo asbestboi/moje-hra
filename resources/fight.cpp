@@ -245,6 +245,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
                     std::cin >> volba;
                     if (volba == 1) {
                         std::cout << "Udelil jsi milost. Chlapec te mlcky opusti...\n";
+                        player.mercy = false;
                         monsters[target].health = 0;
                         waitForKeyPress();
                         clearScreen();
