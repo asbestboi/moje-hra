@@ -108,7 +108,14 @@
 >ted lze videt kolik zaplatite v hospode i s charisma slevou
 >cena veci v obchode se bude menit podle toho kolikrat to hrac koupi
 
-15/06/2025
+15/06/2025 - finalni update
 >pridan dobry pocet enemy a vic ascii artu
 >opraven mercy
 >buff nepratel
+>pridan lore
+>pridan finalni boss
+>pridan level up sound
+>pridana infekce
+>pridana hudba na konci hry
+>pridan prastary svitek
+>DEKUJI ZA CTENI CHANGELOGU!

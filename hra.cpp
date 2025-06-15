@@ -121,9 +121,11 @@ int main() {
     fight(player, boj3, 2);
     SetColor(7, 0); //bila
     std::cout << "---pred tebou se zjevil mini boss!---\n";
+    Sleep(1000);
     SetColor(10, 0); //zelena
     if(player.isBlind == false) printAsciiArt("MB1");
-SetColor(7, 0); //bila
+    Sleep(500);
+    waitForKeyPress();
 //MB sliz
     Monster MB1[1] = {
         {"Obrovsky sliz", 25 + rand() % 8, 3, 4, true},
@@ -138,7 +140,7 @@ while (true) {
     Sleep(1000);
     std::cout << "[1] do kopce\n";
     std::cout << "[2] z kopce\n";
-    Sleep(1000);
+    Sleep(200);
     std::cout << "Vyber 1 nebo 2: ";
     std::cin >> choice;
 
@@ -203,7 +205,7 @@ while (true) {
 }
         village(player);
         Monster boj7[1] = {
-        {"Temny Executioner", 15 + rand() % 8, 3, 5},
+        {"Temny Executioner", 20 + rand() % 8, 3, 5},
         };
         fight(player, boj7, 1);
         while (true) {
@@ -242,14 +244,13 @@ while (true) {
         clearScreen();
     }
 }
-village(player);
-
         Monster boj8[3] = {
-        {"Bandit", 25 + rand() % 6, 4, 6},
-        {"Bandit", 25 + rand() % 6, 4, 6},
-        {"Bandit s paskou pres oko", 30 + rand() % 6, 5, 8},
+            {"Bandita", 25 + rand() % 3, 4, 6},
+            {"Banditka", 25 + rand() % 3, 4, 6},
+            {"Bandita s paskou pres oko", 25 + rand() % 8, 5, 8},
         };
         fight(player, boj8, 3);
+        village(player);
 if (choice == 1) {
         clearScreen();
         //check na milost
@@ -257,8 +258,9 @@ if (choice == 1) {
         if (player.mercy == true) {
             waitForKeyPress();
             clearScreen();
-            std::cout << "dekuji moc ze jsi nezabil meho bratra, byl jen vystraseny a proto utocil. Tady mas! (hodil ti sacek zlataku)\n";
-            player.gold += 100;
+            std::cout << "dekuji moc ze jsi nezabil meho bratra, byl jen vystraseny a proto utocil. Tady mas! (hodil ti sacek zlataku a prastary svitek)\n";
+            player.inventory.push_back("Prastary svitek");
+            player.gold += 200;
             waitForKeyPress();
         } else if (player.mercy == false) {
             waitForKeyPress();
@@ -274,21 +276,80 @@ if (choice == 1) {
             waitForKeyPress();
                 Monster Chlapec[2] = {
             {"Silny Chlapec", 70 + rand() % 5, 10, 15, true},
-        };
-        fight(player, Chlapec, 1);
-        }
+            };
+            fight(player, Chlapec, 1);
+            std::cout << "nasel jsi hromadu zlataku ktere chlapec mel u sebe.\n";
+            player.gold += 400;
             waitForKeyPress();
+        }
     } else if (choice == 2) {
         //nic
     }
-    std::cout << "---pred tebou se zjevil mini boss!---\n";
-    if(player.isBlind == false) printAsciiArt("MB2");
-    waitForKeyPress();
-            Monster MB2[2] = {
-        {"Zly Rytir", 50 + rand() % 10, 8, 25},
-        {"Drak", 120 + rand() % 10, 5, 15},
-        };
-        fight(player, MB2, 2);
     village(player);
-//pokracovani
+    Monster boj9[2] = {
+        {"Posedla lebka", 25 + rand() % 3, 4, 5},
+        {"Posedla lebka", 25 + rand() % 3, 4, 5},
+    };
+    fight(player, boj9, 2);
+    std::cout << "---pred tebou se zjevil mini boss!---\n";
+    Sleep(1000);
+    if(player.isBlind == false) printAsciiArt("MB2");
+    Sleep(500);
+    waitForKeyPress();
+    Monster MB2[2] = {
+        {"Zly Rytir", 50 + rand() % 10, 8, 25, true},
+        {"Drak", 100 + rand() % 10, 5, 15},
+    };
+    fight(player, MB2, 2);
+    if(player.isBlind == false) std::cout << "V dalce vidis vez. Rytir odtamtud asi priletel. Pobliz je take vesnice\n";
+    waitForKeyPress();
+    village(player);
+    std::cout << "vchazis do veze...\n";
+    Monster boj10[2] = {
+        {"Prizrak s mecem", 40 + rand() % 5, 4, 5},
+        {"Prizrak s kopim", 30 + rand() % 5, 3, 8},
+    };
+    fight(player, boj10, 2);
+    Monster boj11[4] = {
+        {"Nacelnik", 30 + rand() % 5, 4, 5},
+        {"Berserker", 16 + rand() % 5, 3, 8},
+        {"Berserker", 16 + rand() % 5, 3, 8},
+        {"Berserker s lebkou na hlave", 24 + rand() % 5, 3, 8},
+    };
+    fight(player, boj11, 4);
+    std::cout << "Dostanes se na vrchol veze.\n";
+    Sleep(1000);
+    std::cout << "Je ti nevolno a obloha je cerna (pociti i slepec)\n";
+    waitForKeyPress();
+    clearScreen();
+    printAsciiArt("HB1");
+    Sleep(1000);
+    std::cout << "HNUSNA PRISERA JE PRED TEBOU\n";
+    Sleep(1000);
+    std::cout << "VIS KDO TO JE. VYPRAVELO SE O NEM DLOUHOU DOBU\n";
+    Sleep(1000);
+    std::cout << "Vsechny tve nemoce, uzkosti a bolest je ted pred tebou, ve forme toho tvora...\n";
+    Sleep(1000);
+    Monster HB1[1] = {
+        {"Plagueville", 400 + rand() % 10, 4, 10, true},
+    };
+    fight(player, HB1, 1);
+    std::cout << "PRISERA PADA K ZEMI...\n";
+    Sleep(1000);
+    std::cout << "JE STALE NA ZIVU?\n";
+    Sleep(1000);
+    std::cout << "NE...\n";
+    Sleep(1000);
+    std::cout << "PRISERA PADA K ZEMI\n";
+    Sleep(1000);
+    std::cout << "PRISERA PADA Z VEZE!\n";
+    Sleep(1000);
+    if(player.isBlind == true) std::cout << "Jako slepec... ZACINAS VIDET\n";
+    Sleep(1000);
+    std::cout << "Vidis jak se obloha meni. Vse je krasne\n";
+    if(player.vampire == true) std::cout << "tve zuby se vrati do normalu... UZ NEJSI UPIR\n";
+    waitForKeyPress();
+    std::cout << "Konec...\n";
+    PlaySound("resources/ending.wav", NULL, SND_LOOP | SND_ASYNC);
+    waitForKeyPress();
 }

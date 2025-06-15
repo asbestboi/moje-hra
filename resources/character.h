@@ -16,7 +16,9 @@ struct Character {
     bool dodge;
     int xp = 0;
     int lvl = 1;
-    int mercy;
+    int infectionStacks = 0;
+    int roundsSinceLastHeal = 0;
+    bool mercy = true;
     std::vector<std::string> inventory;
 };
 
