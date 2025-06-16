@@ -1,6 +1,8 @@
 # CrownOfHornsRPG
 ![Logo](resources/extras/icon.png)
 
+![art](resources/extras/bonusart.png)
+
 ----------------
 
 ## BERTE NA VĚDOMÍ!
