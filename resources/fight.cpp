@@ -277,7 +277,7 @@ void fight(Character &player, Monster monsters[], int monsterCount) {
             logEvent("Utocis na " + monsters[target].name + " za " + std::to_string(damage));
             attacksound();
             if (player.vampire && monsters[target].health <= 0) {
-                int heal = player.maxHealth / 4;
+                int heal = player.maxHealth / 3;
                 player.health = std::min(player.maxHealth, player.health + heal);
                 SetColor(14, 0);
                 std::cout << "Jako upir sis vylecil " << heal << " zivotu\n";

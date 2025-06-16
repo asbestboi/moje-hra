@@ -43,7 +43,7 @@ Character chooseClass() {
         } else if (choice == 2) {
             player = {"mnich", 6, 6, 3, 6, 6, 25, 100, 35, false, false, false, false};
         } else if (choice == 3) {
-            player = {"upir", 7, 7, 5, 5, 5, 25, 0, 25, false, true, false, false};
+            player = {"upir", 9, 9, 6, 5, 5, 25, 0, 25, false, true, false, false};
         } else if (choice == 4) {
             player = {"gambler", 6, 6, 3, 5, 5, 0, 0, 35, false, false, true, false};
         } else if (choice == 5) {
@@ -301,6 +301,8 @@ if (choice == 1) {
         {"Drak", 100 + rand() % 10, 5, 15},
     };
     fight(player, MB2, 2);
+    std::cout << "nasel jsi mesec zlataku ktere rytir mel u sebe.\n";
+    player.gold += 150;
     if(player.isBlind == false) std::cout << "V dalce vidis vez. Rytir odtamtud asi priletel. Pobliz je take vesnice\n";
     waitForKeyPress();
     village(player);
@@ -334,6 +336,7 @@ if (choice == 1) {
         {"Plagueville", 400 + rand() % 10, 4, 10, true},
     };
     fight(player, HB1, 1);
+    PlaySound("resources/ending.wav", NULL, SND_LOOP | SND_ASYNC);
     std::cout << "PRISERA PADA K ZEMI...\n";
     Sleep(1000);
     std::cout << "JE STALE NA ZIVU?\n";
@@ -350,6 +353,5 @@ if (choice == 1) {
     if(player.vampire == true) std::cout << "tve zuby se vrati do normalu... UZ NEJSI UPIR\n";
     waitForKeyPress();
     std::cout << "Konec...\n";
-    PlaySound("resources/ending.wav", NULL, SND_LOOP | SND_ASYNC);
     waitForKeyPress();
 }
